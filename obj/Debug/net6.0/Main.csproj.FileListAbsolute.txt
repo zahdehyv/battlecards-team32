@@ -1,0 +1,15 @@
+/home/mauri/Documents/projects/code/battlecards/Main/bin/Debug/net6.0/Main
+/home/mauri/Documents/projects/code/battlecards/Main/bin/Debug/net6.0/Main.deps.json
+/home/mauri/Documents/projects/code/battlecards/Main/bin/Debug/net6.0/Main.runtimeconfig.json
+/home/mauri/Documents/projects/code/battlecards/Main/bin/Debug/net6.0/Main.dll
+/home/mauri/Documents/projects/code/battlecards/Main/bin/Debug/net6.0/ref/Main.dll
+/home/mauri/Documents/projects/code/battlecards/Main/bin/Debug/net6.0/Main.pdb
+/home/mauri/Documents/projects/code/battlecards/Main/obj/Debug/net6.0/Main.csproj.AssemblyReference.cache
+/home/mauri/Documents/projects/code/battlecards/Main/obj/Debug/net6.0/Main.GeneratedMSBuildEditorConfig.editorconfig
+/home/mauri/Documents/projects/code/battlecards/Main/obj/Debug/net6.0/Main.AssemblyInfoInputs.cache
+/home/mauri/Documents/projects/code/battlecards/Main/obj/Debug/net6.0/Main.AssemblyInfo.cs
+/home/mauri/Documents/projects/code/battlecards/Main/obj/Debug/net6.0/Main.csproj.CoreCompileInputs.cache
+/home/mauri/Documents/projects/code/battlecards/Main/obj/Debug/net6.0/Main.dll
+/home/mauri/Documents/projects/code/battlecards/Main/obj/Debug/net6.0/ref/Main.dll
+/home/mauri/Documents/projects/code/battlecards/Main/obj/Debug/net6.0/Main.pdb
+/home/mauri/Documents/projects/code/battlecards/Main/obj/Debug/net6.0/Main.genruntimeconfig.cache
