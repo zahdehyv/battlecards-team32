@@ -1,17 +1,17 @@
-using System;
-using System.Collections.Generic;
-
 namespace YUGIOH
 {
     public class Deck
     {
+        public string Deckname;
         public List<Card> Cards;
-public string Deckname;
-        public Deck(string name ,List<Card> aCards)
+
+        public Deck(string name,List<Card> aCards)
         {
-            Deckname=name;
+            Deckname = name;//SEXO
             Cards = aCards;
         }
+
+        public bool IsEmpty(){return !(Cards.Count() > 0);}
 
         public void Add(Card card)
         {
@@ -22,7 +22,7 @@ public string Deckname;
         {
             for (int i = 0; i < Cards.Count; i++)
             {
-                if (Cards[i].card_name == name)
+                if (Cards[i].Name == name)
                 {
                     Cards.RemoveAt(i);
                     return;
@@ -49,7 +49,7 @@ public string Deckname;
             {
                 foreach (Card c in Cards)
                 {
-                    System.Console.WriteLine(c.card_name);
+                    System.Console.WriteLine(c.Name);
                 }
             }
         }

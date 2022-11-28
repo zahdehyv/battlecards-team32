@@ -1,16 +1,31 @@
-// namespace YUGIOH
-// {
-//     abstract class Effect
-//     {
-//         public Card Carta;
-//         public string stat;
-//         public int Cant;
+namespace YUGIOH
+{
+    public class Effect
+    {
+        public string Stat;
+        public int Cant;
 
-//         virtual public 
-//     }
+        public Effect(string aStat, int aCant)
+        {
+            Stat = aStat;
+            Cant = aCant;
+        }
 
-//     class Damage:Effect
-//     {
+        public void Execute(Card card)
+        {
+            card.Stats[Stat] -= Cant;
+        }
+    }
 
-//     }
-// }
+    
+
+    // class SimpleAttack:Effect
+    // {
+    //     public SimpleAttack()
+    // }
+
+    // class Damage:Effect
+    // {
+
+    // }
+}
