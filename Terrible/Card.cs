@@ -2,6 +2,7 @@ namespace YUGIOH
 {
     public class Card
     {
+        //por el momento no va a ser abstracta
         public string card_name;
         public string description;
         public Dictionary<string, int> stats;
@@ -16,7 +17,8 @@ namespace YUGIOH
 
         public void WriteCard()
         {
-            System.Console.WriteLine(card_name + " Life: " + stats["Life"]+" Attack: " + stats["Attack"] + " Defense: " + stats["Defense"] + " Speed: " + stats["Speed"]);
+            System.Console.WriteLine(card_name);
+            System.Console.WriteLine(" Life: " + stats["Life"]+" Attack: " + stats["Attack"] + " Defense: " + stats["Defense"] + " Speed: " + stats["Speed"]);
         }
 
     }
