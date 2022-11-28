@@ -106,7 +106,7 @@ public List<Deck> _Recopilatory(){
                 return 0;
             }
             else
-                return Convert.ToInt32(ToCalc[0]);
+                return _GetValue(ToCalc[0], stats);
         }
 
         int _GetValue(string value, Dictionary<string, int> stats)
