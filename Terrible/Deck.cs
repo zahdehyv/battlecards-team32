@@ -40,15 +40,19 @@ public string Deckname;
         {
             if (AllInfo)
             {
+                System.Console.WriteLine("Deck "+Deckname+" with "+Cards.Count+" cards");
                 foreach (Card c in Cards)
                 {
+                    System.Console.Write("- ");
                     c.WriteCard();
                 }
             }
             else
             {
+                System.Console.WriteLine("Deck "+Deckname);
                 foreach (Card c in Cards)
                 {
+                    System.Console.Write("- ");
                     System.Console.WriteLine(c.card_name);
                 }
             }

@@ -1,36 +1,22 @@
 namespace YUGIOH
 {
-    abstract public class Card
+    public class Card
     {
         public string card_name;
         public string description;
-        public int cost;
+        public Dictionary<string, int> stats;
         // public effect effect;
 
-        virtual public void WriteCard()
-        {
-            System.Console.WriteLine("Calling abstract WriteCard");
-        }
-    }
-    public class Character : Card
-    {
-        public int strength;
-        // Atack/Vida
-        public int energy;
-        // mana/def
-
-        public Character(string aName, string aDescription, int aStrength, int aEnergy)
+        public Card(string aName, string aDescription, Dictionary<string, int> aStats)
         {
             card_name = aName;
             description = aDescription;
-            cost = aStrength + aEnergy;
-            strength = aStrength;
-            energy = aEnergy;
+            stats = aStats;
         }
 
-        override public void WriteCard()
+        public void WriteCard()
         {
-            System.Console.WriteLine(card_name +" Cost: " + cost + " Strength: " + strength + " Energy: " + energy + " " + description);
+            System.Console.WriteLine(card_name + " Life: " + stats["Life"]+" Attack: " + stats["Attack"] + " Defense: " + stats["Defense"] + " Speed: " + stats["Speed"]);
         }
 
     }

@@ -1,4 +1,10 @@
 ﻿using Compiler;
 // See https://aka.ms/new-console-template for more information
-MazeCreator asd =new MazeCreator();
-Console.WriteLine(asd._Arithmethic("2+3+3/2",new Dictionary<string, int>()));
+MazeCreator asd = new MazeCreator();
+var decks = asd._Recopilatory();
+System.Console.WriteLine();
+foreach (var item in decks)
+{
+   item.ShowDeck(true);
+    System.Console.WriteLine();
+}

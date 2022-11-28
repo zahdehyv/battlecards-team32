@@ -1,0 +1,10 @@
+Life = 25
+Attack = 13
+Defense = 10
+Speed = 5
+
+[ataque 1]
+obj.life
+cst.life
+end
+

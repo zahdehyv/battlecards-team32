@@ -15,10 +15,17 @@ namespace Compiler
             {
                 card.Add(_MakeCard(item));
             }
-            return new Deck(Path.GetDirectoryName(deckpath), card);
+            return new Deck(Path.GetFileName(deckpath), card);
         }
-
-        Character _MakeCard(string cardpath)
+public List<Deck> _Recopilatory(){
+    List<Deck> list=new List<Deck>();
+    foreach (var item in _CargarIndices())
+    {
+       list.Add(_MakeDeck(item)); 
+    }
+    return list;
+}
+        Card _MakeCard(string cardpath)
         {
             var texto = File.ReadAllLines(cardpath);
             var stats = new Dictionary<string, int>{
@@ -36,22 +43,33 @@ namespace Compiler
                     {
                         string[] presub = new string[i];
                         string[] postsub = new string[toks.Length - (i + 1)];
+                        StringBuilder possub=new StringBuilder();
+                        
                         Array.Copy(toks, 0, presub, 0, presub.Length);
                         Array.Copy(toks, i + 1, postsub, 0, postsub.Length);
-                        _Asignate(presub, postsub.ToString(), stats);
+                        foreach (var itemi in postsub)
+                        {
+                            possub.Append(itemi);
+                        }
+                        _Asignate(presub, possub.ToString(), stats);
                         break;
                     }
                 }
             }
 
-            return new Character(Path.GetFileNameWithoutExtension(cardpath), "def", 10, 10);
+            return new Card(Path.GetFileNameWithoutExtension(cardpath),"asd",stats);
         }
 
         void _Asignate(string[] asignto, string expression, Dictionary<string, int> stats)
         {
             var a = _Arithmethic(expression, stats);
+
+            foreach (var item in asignto)
+            {
+                stats[item]=Convert.ToInt32(a);
+            }
         }
-        public double _Arithmethic(string expression, Dictionary<string, int> stats)
+        public int _Arithmethic(string expression, Dictionary<string, int> stats)
         {
             StringBuilder expc = new StringBuilder(expression);
             string valid = "+-*/";
@@ -69,14 +87,14 @@ namespace Compiler
             ToCalc.AddRange(expc.ToString().Split());
             foreach (var item in ToCalc)
             {
-                System.Console.WriteLine(item);
+                // System.Console.WriteLine(item);
             }
             for (int i = 0; i < ToCalc.Count; i++)
             {
                 if (valid.Contains(ToCalc[i]))
                 {
-                    double a = _GetValue(ToCalc[i - 1], stats);
-                    double b = _GetValue(ToCalc[i + 1], stats);
+                    int a = _GetValue(ToCalc[i - 1], stats);
+                    int b = _GetValue(ToCalc[i + 1], stats);
                     ToCalc[i] = _Evaluate(a, b, ToCalc[i]).ToString();
                     ToCalc.RemoveAt(i + 1);
                     ToCalc.RemoveAt(i - 1);
@@ -91,7 +109,7 @@ namespace Compiler
                 return Convert.ToInt32(ToCalc[0]);
         }
 
-        double _GetValue(string value, Dictionary<string, int> stats)
+        int _GetValue(string value, Dictionary<string, int> stats)
         {
             if (stats.ContainsKey(value))
             {
@@ -101,7 +119,7 @@ namespace Compiler
                 return Convert.ToInt32(value);
         }
 
-        double _Evaluate(double a, double b, string mod)
+        int _Evaluate(int a, int b, string mod)
         {
             switch (mod)
             {
@@ -119,7 +137,7 @@ namespace Compiler
         }
         string[] _CargarIndices()
         {
-            var decksfolder = Directory.GetDirectories("../../decks");
+            var decksfolder = Directory.GetDirectories("./decks");
             List<string[]> cardsbydeck = new List<string[]>();
             foreach (var item in decksfolder)
             {

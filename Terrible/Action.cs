@@ -2,10 +2,10 @@ namespace YUGIOH
 {
     class Action
     {
-        public void Damage(Character Emisor, Character Receptor)
+        public void Damage(Card Emisor, Card Receptor)
         {
 
-            Receptor.strength -= Emisor.strength; 
+            Receptor.stats["Attack"] -= Emisor.stats["Defense"]; 
         }
     }    
 }

@@ -1,0 +1,12 @@
+Life = 5
+Defense Speed = Life*2
+Life = Life+3
+Attack = Life/Life
+Life = 100
+Life = Life/2/2/2
+
+[ataque 1]
+obj.life
+cst.life
+end
+
