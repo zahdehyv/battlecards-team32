@@ -17,14 +17,15 @@ namespace Compiler
             }
             return new Deck(Path.GetFileName(deckpath), card);
         }
-public List<Deck> _Recopilatory(){
-    List<Deck> list=new List<Deck>();
-    foreach (var item in _CargarIndices())
-    {
-       list.Add(_MakeDeck(item)); 
-    }
-    return list;
-}
+        public List<Deck> _Recopilatory()
+        {
+            List<Deck> list = new List<Deck>();
+            foreach (var item in _CargarIndices())
+            {
+                list.Add(_MakeDeck(item));
+            }
+            return list;
+        }
         Card _MakeCard(string cardpath)
         {
             var texto = File.ReadAllLines(cardpath);
@@ -43,8 +44,8 @@ public List<Deck> _Recopilatory(){
                     {
                         string[] presub = new string[i];
                         string[] postsub = new string[toks.Length - (i + 1)];
-                        StringBuilder possub=new StringBuilder();
-                        
+                        StringBuilder possub = new StringBuilder();
+
                         Array.Copy(toks, 0, presub, 0, presub.Length);
                         Array.Copy(toks, i + 1, postsub, 0, postsub.Length);
                         foreach (var itemi in postsub)
@@ -57,7 +58,7 @@ public List<Deck> _Recopilatory(){
                 }
             }
 
-            return new Card(Path.GetFileNameWithoutExtension(cardpath),"asd",stats);
+            return new Card(Path.GetFileNameWithoutExtension(cardpath), "asd", stats);
         }
 
         void _Asignate(string[] asignto, string expression, Dictionary<string, int> stats)
@@ -66,7 +67,7 @@ public List<Deck> _Recopilatory(){
 
             foreach (var item in asignto)
             {
-                stats[item]=Convert.ToInt32(a);
+                stats[item] = Convert.ToInt32(a);
             }
         }
         public int _Arithmethic(string expression, Dictionary<string, int> stats)
