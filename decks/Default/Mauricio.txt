@@ -1,0 +1,6 @@
+set ife to 25
+set Atack to 13
+st Defense to 10
+set Speed to Lifff
+
+

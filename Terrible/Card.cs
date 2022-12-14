@@ -1,3 +1,5 @@
+using Compiler;
+
 namespace YUGIOH
 {
     // abstract public class Card
@@ -23,8 +25,8 @@ namespace YUGIOH
     public class Card
     {
         public string Name;
-        public Dictionary<string,int> Stats;
-        public List<Action> Actions;
+        public Dictionary<string, int> Stats;
+        public List<Accion> Actions;
         // public int Life;
         // public int Attack;
         // public int Defense;
@@ -33,7 +35,7 @@ namespace YUGIOH
 
         // mana/def
 
-        public Card(string aName, int aLife, int aAttack, int aDefense, int aSpeed, List<Action> actions )
+        public Card(string aName, int aLife, int aAttack, int aDefense, int aSpeed, List<Accion> actions)
         {
             Name = aName;
             Stats = new Dictionary<string, int>
@@ -43,7 +45,7 @@ namespace YUGIOH
                 {"Defense",aDefense},
                 {"Speed",aSpeed}
             };
-            this.Actions = actions;
+            Actions = actions;
         }
         //  public Card(string aName, int aLife, int aAttack, int aDefense, int aSpeed )
         // {
@@ -56,35 +58,56 @@ namespace YUGIOH
         //         {"Speed",aSpeed}
         //     };
         // }
-        public Card(string aName, Dictionary<string,int> aStats, List<Action> actions)
+        public Card(string aName, Dictionary<string, int> aStats, List<Accion> _actions)
         {
             Name = aName;
             Stats = aStats;
-            this.Actions = actions;
+            Actions = _actions;
         }
         // Dictionary<"string","int">
 
         // public void AddAction(Action a){ Actions.Add(a); }
 
-        public bool IsDead(){ return Stats["Life"]<=0; }
+        public bool IsDead() { return Stats["Life"] <= 0; }
+
+        public int GetCardValue()
+        {
+            int val = 0;
+            if (Stats["Life"] > 0)
+            {
+                foreach (int i in Stats.Values)
+                {
+                    if (i > 0) val += i;
+                }
+            }
+            return val;
+        }
 
         public void WriteCard()
         {
             System.Console.Write(Name + " ");
-            string a = ": ";
-            foreach(string s in Stats.Keys)
+            foreach (string item in Stats.Keys)
             {
-                System.Console.Write(s + a + Stats[s] + " ");
+                System.Console.Write($"  {item}: {Stats[item]}  ");
             }
             System.Console.WriteLine();
         }
 
-         public int Damage(){ return Stats["Attack"]; }
-
-        public  void TakeDamage(int damage)
+        public void SimpleAttack(Card c)
         {
-            Stats["Life"] -= damage;
+            int damage = Stats["Attack"] - c.Stats["Defense"];
+            if (damage > 0)
+            {
+                c.Stats["Life"] -= damage;
+            }
         }
+
+        //  public int Damage(){ return Stats["Attack"]; }
+
+        // public  void TakeDamage(int damage)
+        // {
+        //     Stats["Life"] -= damage;
+        // }
 
     }
 

@@ -38,6 +38,7 @@ namespace YUGIOH
 
         public void ShowDeck(bool AllInfo)
         {
+            System.Console.WriteLine($"Deck {Deckname}");
             if (AllInfo)
             {
                 foreach (Card c in Cards)

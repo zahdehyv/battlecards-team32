@@ -1,28 +1,29 @@
-namespace YUGIOH
+using YUGIOH;
+
+namespace Compiler
 {
     // abstract class  Action
     // {
     //     virtual public void ActionExecution(int fil_target, int col_target){}
     // }    
 
-    public class Action//:Action
+    public class Accion//:Action
     {
         // public SimpleAttack(Card aEmisor, Board tablero){Emisor=aEmisor; Tablero=tablero;}
         public string Name;
-        public List<Effect> Effects;
-
-        public Action(string aName,List<Effect> aEffects)
+        public List<InstructionNode> Effects;
+        public int toSelect;
+        public Accion(string aName, int _toselect, List<InstructionNode> aEffects)
         {
             Name = aName;
+            toSelect = _toselect;
             Effects = aEffects;
         }
-
-        public void ShowAction()
+        public void DoAct(Card Self, Card Target, Player P1, Player P2)
         {
-            System.Console.WriteLine(Name);
-            foreach (Effect e in Effects)
+            foreach (var item in Effects)
             {
-                System.Console.WriteLine(e.Stat + " " + e.Cant);
+                item.Run(Self.Stats, Target.Stats,P1, P2);
             }
         }
         public void SimpleAttack(Card emisor, Card receptor, Player cPlayer)
