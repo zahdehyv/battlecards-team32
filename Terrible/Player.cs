@@ -1,29 +1,44 @@
 namespace YUGIOH
 {
     // HAND ATTRIBUTE NOT AVAILABLE
-    public class Player
+    public class Player : ICloneable
     {
-        // public Deck Hand;
+        // public List<Card> Hand;
         public Card[] Field;
         public Deck Deck;
 
         public Player(Deck aDeck)
         {
             Deck = aDeck;
-            // Hand = new Deck();
+            // Hand = new List<Card>();
             Field = new Card[4];
+        }
+
+        public Player(Player player)
+        {
+            Field = new Card[4];
+            for (int i = 0; i < player.Field.Count(); i++)
+            {
+                if (player.Field[i] != null)
+                    Field[i] = (Card)player.Field[i].Clone();
+            }
+            Deck = new Deck(player.Deck.Deckname, player.Deck.Cards);
+            // foreach (var item in player.Deck)
+            // {
+            //     Deck.Add((Card)item.Clone());
+            // }
         }
 
         public Player(Deck aDeck, Card[] Field)
         {
             this.Deck = aDeck;
             this.Field = Field;
-            // Hand = new Deck();
+            // Hand = new List<Card>();
         }
 
-        public Player Copy()
+        public Object Clone()
         {
-            return new Player(Deck,Field);
+            return new Player(this);
         }
 
         public int GetFieldValue()
@@ -31,61 +46,69 @@ namespace YUGIOH
             int val = 0;
             foreach (Card c in Field)
             {
-                if(c != null){ val += c.GetCardValue(); }
+                if (c != null) { val += c.GetCardValue(); }
             }
             return val;
         }
 
-        virtual public AccionIndex[] GetActions(Player oP)
+
+        public string WritePlayer(Board board)
+        {
+            if (this == board.P1)
+                return("Player1");
+            else return("Player2");
+        }
+
+        virtual public AccionIndex[] GetActions(Player oP, int oPint, Board board)
         {
             AccionIndex[] ans = new AccionIndex[4];//Es 4 porque el terrno es de tamanno fijo 4
 
             for (int i = 0; i < 4; i++)
             {
-                // System.Console.WriteLine("Escoge una accion para la carta " + i);
+                if (this.Field[i] != null)
+                {
+                    System.Console.WriteLine("Escoge a quien atacara la carta " + (i + 1));
+                    Console.ReadLine();
+                    System.Console.WriteLine();
+                    System.Console.WriteLine("My Field");
+                    System.Console.WriteLine();
+                    ShowField();
 
-                System.Console.WriteLine("Escoge a quien atacara la carta " + (i+1));
-                System.Console.WriteLine();
-                System.Console.WriteLine("My Field");
-                System.Console.WriteLine();
-                ShowField();
+                    // int PlayerAffectedint = GetSelection(2, "Player to be affected");
+                    // // int Accion = GetSelection(2,"Accion to take") AQUI EL TIPO DEBE ESCOGER LA ACCION A EJECUTAR
 
-                // int PlayerAffectedint = GetSelection(2, "Player to be affected");
-                // // int Accion = GetSelection(2,"Accion to take") AQUI EL TIPO DEBE ESCOGER LA ACCION A EJECUTAR
+                    // Player PlayerAffected = P1;
+                    // if (PlayerAffectedint == 1) { PlayerAffected = P2; }
 
-                // Player PlayerAffected = P1;
-                // if (PlayerAffectedint == 1) { PlayerAffected = P2; }
+                    System.Console.WriteLine("Opponent Field");
+                    System.Console.WriteLine();
+                    oP.ShowField();
+                    int CardIndex = GetSelection(4, "targeted card");
 
-                System.Console.WriteLine("Opponent Field");
-                System.Console.WriteLine();
-                oP.ShowField();
-                int CardIndex = GetSelection(4, "targeted card");
-
-                ans[i] = new AccionIndex(oP,CardIndex);
+                    ans[i] = new AccionIndex(oPint, CardIndex);
+                }
             }
 
             return ans;
         }
-
-
 
         public void ShowField()
         {
             for (int i = 0; i < Field.Count(); i++)
             {
                 System.Console.Write(i + 1 + " ");
-                if(Field[i] != null) Field[i].WriteCard();
+                if (Field[i] != null) Field[i].WriteCard();
                 else System.Console.WriteLine();
                 System.Console.WriteLine();
             }
         }
 
-        public void PlayCard()
+        public virtual void PlayCard()
         {
             if (IsDeckEmpty() || IsFieldFull()) { return; }
             ShowDeck();
             int s = GetSelection(Deck.Cards.Count, "a card to play");
-            PlayCardFromDeck(s,GetFreeSpace());
+            PlayCardFromDeck(s, GetFreeSpace());
             PlayCard();
             return;
         }
@@ -94,15 +117,18 @@ namespace YUGIOH
         {
             var Entry = Console.ReadLine();
             int choice = 0;
-            
-            if(Entry!=null){choice = Convert.ToInt32(Entry);}
+
+            if (Entry != "")
+            {
+                choice = Convert.ToInt32(Entry);
+            }
 
             while (!IsIndexOk(choice, size))
             {
                 System.Console.WriteLine("Indexa bien comunista >=(");
                 choice = Convert.ToInt32(Console.ReadLine());
             }
-
+            
             return choice - 1;
         }
 

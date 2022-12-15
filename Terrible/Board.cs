@@ -1,6 +1,8 @@
+using Compiler;
+
 namespace YUGIOH
 {
-    public class Board
+    public class Board : ICloneable
     {
         public Player P1;
         public Player P2;
@@ -15,6 +17,19 @@ namespace YUGIOH
             TextBox = "START";
         }
 
+        public Board(Board board)
+        {
+            P1 = (Player)board.P1.Clone();
+            P2 = (Player)board.P2.Clone();
+            TextBox = "";
+            Round = 0;
+        }
+
+        public Object Clone()
+        {
+            return new Board(this);
+        }
+
         public void Play()
         {
             Round += 1;
@@ -24,79 +39,124 @@ namespace YUGIOH
                 System.Console.WriteLine("ROUND " + Round);
                 System.Console.WriteLine();
 
-                // ----------------------------------------
-                // if (!P1.IsDeckEmpty()) { P1.Draw(0); }
-                // PlayCard(0);
-                // if (!P2.IsDeckEmpty()) { P2.Draw(0); }
-                // PlayCard(1);
-                // -----------------------------------------
-                // Si el campo tiene espacio libre y el deck no esta vacio
-                // Selecciona tantas cartas del deck como espacios libres o hasta que el deck este vacio
-
                 P1.PlayCard();
                 P2.PlayCard();
 
-                var P1Accions = P1.GetActions(P2);//
-                // System.Console.WriteLine("SEXOOOOOOOOOOOOO");
-                var P2Accions = P2.GetActions(P1);
+                var P1Accions = P1.GetActions(P2, 1, this);
+                var P2Accions = P2.GetActions(P1, 0, this);
+
+                // System.Console.WriteLine("Player1 Accions");
+                // foreach (var element in P1Accions)
+                // {
+                //     System.Console.WriteLine(element.Player + ", " + element.FieldIndex);
+                // }
+
+                // System.Console.WriteLine("Player2 Accions");
+                // foreach (var element in P2Accions)
+                // {
+                //     System.Console.WriteLine(element.Player + ", " + element.FieldIndex);
+                // }
+                // Console.ReadLine();
 
                 List<(Player, int)> AccionOrder = new List<(Player, int)>();
                 var AllCardsInField = GetAllCardsInFieldIndex();
 
                 GetAccionOrder(AllCardsInField, AccionOrder, 0, (P1, -1));
 
-                // ExecuteActions(AccionOrder,P1Accions,P2Accions);
-
-                System.Console.WriteLine("EXECUTEACTIONS COMENTADO POR REPARACIONES. FIN DEL PROGRAMA");
+                ExecuteActions(AccionOrder, P1Accions, P2Accions);
 
                 Round += 1;
-                return;
-
-
-
             }
+            return;
         }
 
-
-        public void ExecuteActions(List<(Player, int)> AccionOrder, (Player, int)[] P1Accions, (Player, int)[] P2Accions)
+        public void ExecuteActions(List<(Player, int)> AccionOrder, AccionIndex[] P1Accions, AccionIndex[] P2Accions)
+        // Este metodo recibe la lista de orden de ejecucion de las cartas y las acciones de cada carta de cada jugador
+        // Primero va por cada elemento de la lista de orden de ejecucion y realiz un proceso igual en funcion de el jugador que le corresponda
+        // al estar el array de acciones ordenado de la misma forma en que estan las cartas en los campos el index de la carta ejecutora
+        // Coincide con el de la posicion en el array de acciones en el accionIndex object esta el player al que esta dirigido el ataque
+        // y el indice de la carta atacada
+        // TODO:Tomar en cuenta la accion especifica de la lista de acciones
         {
             foreach (var e in AccionOrder)
+            // Primero comprobar cual es el player que le toca
             {
 
                 if (e.Item1 == P1)
                 {
-                    var CurrentCardAccion = P1Accions[e.Item2];
-                    var CurrentCardAccionPlayer = CurrentCardAccion.Item1;
-                    var CurrentCardAccionTatgetIndex = CurrentCardAccion.Item2;
-                    var attacked_card = CurrentCardAccionPlayer.Field[CurrentCardAccionTatgetIndex];
+                    var AccionForCurrentCard = P1Accions[e.Item2];//Coger el accionIndex de la carta que le toca
 
-                    if (attacked_card != null) { P1.Field[e.Item2].SimpleAttack(attacked_card); }
+                    var TargetPlayer = GetPlayerFromInt(AccionForCurrentCard.Player);//Coger el jugador al que esta dirigida la accion
+
+                    var TargetIndex = AccionForCurrentCard.FieldIndex;//Coger el index de la carta a la que esta dirigida la accion
+
+                    var attacked_card = TargetPlayer.Field[TargetIndex];//Aqui selecciono a carta sobre la que se realizara la accion
+
+                    if (attacked_card != null && P1.Field[e.Item2] != null)
+                    {
+                        P1.Field[e.Item2].SimpleAttack(attacked_card); //Aca en vez de Simpple attack tiene que llamar 
+                                                                       // al accion escogido por el player
+                        System.Console.WriteLine("La carta ");
+                        P1.Field[e.Item2].WriteCard();
+                        System.Console.WriteLine("De Player1");//
+                        System.Console.WriteLine("Ejecuto una accion sobre la carta");
+                        attacked_card.WriteCard();
+                        System.Console.WriteLine("De " + TargetPlayer.WritePlayer(this));
+                        Console.ReadLine();
+                        ShowFieldData();
+                        Console.ReadLine();
+                    }
+                    UpdateBoard();
                 }
-                if (e.Item1 == P2)
+                else if (e.Item1 == P2)
                 {
-                    var CurrentCardAccion = P2Accions[e.Item2];
-                    var CurrentCardAccionPlayer = CurrentCardAccion.Item1;
-                    var CurrentCardAccionTatgetIndex = CurrentCardAccion.Item2;
-                    var attacked_card = CurrentCardAccionPlayer.Field[CurrentCardAccionTatgetIndex];
+                    var AccionForCurrentCard = P2Accions[e.Item2];
 
-                    // System.Console.WriteLine("Es null: " + (CurrentCardAccionPlayer.Field[ CurrentCardAccionTatgetIndex] == null));
+                    var TargetPlayer = GetPlayerFromInt(AccionForCurrentCard.Player);
 
-                    if (attacked_card != null) { P2.Field[e.Item2].SimpleAttack(attacked_card); }
+                    var TargetIndex = AccionForCurrentCard.FieldIndex;
+
+                    var attacked_card = TargetPlayer.Field[TargetIndex];
+
+                    if (attacked_card != null && P2.Field[e.Item2] != null )
+                    {
+                        P2.Field[e.Item2].SimpleAttack(attacked_card); //Aca en vez de Simpple attack tiene que llamar 
+                                                                       // al accion escogido por el player
+                        System.Console.WriteLine("La carta ");
+                        P2.Field[e.Item2].WriteCard();
+                        System.Console.WriteLine("De Player2");
+                        System.Console.WriteLine("Ejecuto una accion sobre la carta");
+                        attacked_card.WriteCard();
+                        System.Console.WriteLine("De " + TargetPlayer.WritePlayer(this));
+                        Console.ReadLine();
+                        ShowFieldData();
+                        Console.ReadLine();
+                    }
+                    UpdateBoard();
                 }
             }
+            System.Console.WriteLine("ESTA ES LA PRUEBA");
+            ShowFieldData();//THIS IS A TEST
+            Console.ReadLine();
             UpdateBoard();
         }
 
-        public Board SimulateBoard()
+
+        public Player GetPlayerFromInt(int p)
+        // Recibe un entero y devuelve el jugador al que esta haciendo referencia (0 se utiliza para player1 y cualquier otro numero para player2)
         {
-            return new Board(P1.Copy(), P2.Copy());
+            if (p == 0) return P1;
+            return P2;
         }
+
         public void ExecuteActions(AccionIndex[] Accions, Player cP)
         {
+
             for (int i = 0; i < Accions.Length; i++)
             {
                 var t = Accions[i];
-                var TargetPlayer = t.Player;
+                var TargetPlayer = P1;
+                if (t.Player != 0) { TargetPlayer = P2; }
                 var TargetIndex = t.FieldIndex;
                 if (TargetPlayer.Field[TargetIndex] != null && cP.Field[i] != null)
                 {
@@ -104,15 +164,10 @@ namespace YUGIOH
                 }
             }
         }
-        public Board SimulateAccions(AccionIndex[] Accions, Player cP)
-        {
-            var B = SimulateBoard();
-            B.ExecuteActions(Accions, cP);
-            return B;
-        }
 
         // Returns the Player, Player.Field Card Index
         public List<(Player, int)> GetAllCardsInFieldIndex()
+        // Este metodo devuelve todas las cartas del campo desordenadas
         {
             List<(Player, int)> Cards = new List<(Player, int)>();
 
@@ -131,8 +186,9 @@ namespace YUGIOH
             return Cards;
         }
 
-        // Returns the Player, Player.Field Card Index
         public void GetAccionOrder(List<(Player, int)> AllCards, List<(Player, int)> SortedList, int Biggest, (Player, int) FastestCard)
+        // Este metodo modifica la lista sortedlist para devolver todas las cartas del campo en una lista ordenadas en funcion de su velocidad
+        // la lista contien una tupla con un item player(el jugador en cuyo campo esta la carta) y un entero que corresponde a la posicion de dicha carta
         {
             if (AllCards.Count != 0)
             {
@@ -150,10 +206,9 @@ namespace YUGIOH
                     {
                         Biggest = cSpeed;
                         FastestCard = Current;
-                        // SortedList.Add(Current);
-                        // AllCards[i] = (cPlayer, -1);
                     }
                 }
+
                 SortedList.Add(FastestCard);
                 AllCards.Remove(FastestCard);
                 GetAccionOrder(AllCards, SortedList, 0, (P1, -1));
@@ -161,32 +216,11 @@ namespace YUGIOH
             return;
         }
 
-        // public (Player, int)[] GetActions(Player cP, Player oP)
-        // {
-        //     bool bp = cP == P2;
+        public BoardValue GetBoardValue(Player cP, Player oP)
+        {
+            return (new BoardValue(cP.GetFieldValue(), oP.GetFieldValue()));
+        }
 
-        //     (Player, int)[] ans = new (Player, int)[4];//Es 4 porque el terrno es de tamanno fijo 4
-
-        //     for (int i = 0; i < 4; i++)
-        //     {
-        //         System.Console.WriteLine("Escoge una accion para la carta " + i);
-
-        //         int PlayerAffectedint = GetSelection(2, "Player to be affected", bp);
-        //         // int Accion = GetSelection(2,"Accion to take") AQUI EL TIPO DEBE ESCOGER LA ACCION A EJECUTAR
-
-        //         Player PlayerAffected = P1;
-        //         if (PlayerAffectedint == 1) { PlayerAffected = P2; }
-
-        //         int CardIndex = GetSelection(4, "affected card", bp);
-
-        //         ans[i] = (PlayerAffected, CardIndex);
-        //     }
-
-        //     return ans;
-        // }
-
-
-        public (int, int) GetBoardValue(Player cP, Player oP) { return (cP.GetFieldValue(), oP.GetFieldValue()); }
         public void UpdateBoard()
         {
             for (int i = 0; i < P1.Field.GetLength(0); i++)
@@ -215,8 +249,6 @@ namespace YUGIOH
                     }
                 }
             }
-
-            // foreach(Card c in P1.Field)
         }
 
         public bool IsFieldEmpty() { return P1.IsFieldEmpty() && P2.IsFieldEmpty(); }
@@ -252,7 +284,7 @@ namespace YUGIOH
 
         public int GetSelection(int size, string w2s, bool bp)
         {
-            ShowBoard(bp, "Choose a " + w2s);
+            System.Console.WriteLine("Choose a " + w2s); ;
 
             int choice = Convert.ToInt32(Console.ReadLine());
 
@@ -267,8 +299,6 @@ namespace YUGIOH
 
         public int GetSelection(int size, string w2s)
         {
-            // ShowBoard(bp, "Choose a " + w2s);
-            // ShowField();
 
             int choice = Convert.ToInt32(Console.ReadLine());
 
@@ -281,123 +311,62 @@ namespace YUGIOH
             return choice - 1;
         }
 
-        // public List<int> Options(Player p)
-        // {
-        //     List<int> options = new List<int>();
-        //     for (int i = 1; i <= p.Hand.Count; i++)
-        //     {
-        //         options.Add(i);
-        //     }
-        //     return options;
-        // }
-
         private bool IsIndexOk(int index, int size)
         {
             if (index > size || index <= 0)
                 return false;
             return true;
         }
-
-        // public bool End() { return (P1.Life <= 0 || P2.Life <= 0); }
         public bool End() { return (P1.IsDeckEmpty() && P1.IsFieldEmpty()) || (P2.IsDeckEmpty() && P2.IsFieldEmpty()); }
 
-
-
-        public void ShowBoard(bool bp, string text)
+        public void ShowFieldData()
         {
-            Player cPlayer = P1;
-            Player oPlayer = P2;
-            if (bp) { cPlayer = P2; oPlayer = P1; }
+            System.Console.WriteLine("Player1:");
+            for (int j = 0; j < P1.Field.Count(); j++)
+            {
+                if (P1.Field[j] != null)
+                {
+                    System.Console.Write(j + " ");
+                    P1.Field[j].WriteCard();
+                }
+            }
 
-            // System.Console.WriteLine("----------------------------------------------------------------------");
-            // ShowHand(P1, b1);
-            System.Console.WriteLine("--------------------------------------------");
-            ShowField();
-            System.Console.WriteLine("--------------------------------------------");
-
-            if (cPlayer == P1) { System.Console.WriteLine("Player1"); }
-            else { System.Console.WriteLine("Player2"); }
-
-            // ShowHand(cPlayer);
             System.Console.WriteLine();
+            System.Console.WriteLine("Player2:");
 
-            ShowFieldData(cPlayer, oPlayer);
-            // ShowHand(P2, b2);
-            System.Console.WriteLine(text);
+            for (int j = 0; j < P2.Field.Count(); j++)
+            {
+                if (P2.Field[j] != null)
+                {
+                    System.Console.Write(j + " ");
+                    P2.Field[j].WriteCard();
+                }
+            }
         }
-
-        // public void ShowHand(Player player)
-        // {
-        //     System.Console.WriteLine();
-        //     System.Console.WriteLine("Hand:");
-        //     foreach (Card c in player.Hand)
-        //     {
-        //         string a = " | ";
-        //         System.Console.Write(a + c.Name + a);
-        //     }
-        //     System.Console.WriteLine();
-        //     System.Console.WriteLine();
-        //     foreach (Card c in player.Hand)
-        //     {
-        //         // string a = " | ";
-        //         // System.Console.Write(a + c.Name + a);
-        //         c.WriteCard();
-        //     }
-        //     System.Console.WriteLine();
-        // }
-
-        public void ShowField()
-        {
-            ShowPlayerField(P1);
-            System.Console.WriteLine("--------------------------------------------");
-            ShowPlayerField(P2);
-        }
-
         public void ShowFieldData(Player cPlayer, Player oPlayer)
         {
             System.Console.WriteLine("My Field:");
-            for (int i = 0; i < cPlayer.Field.GetLength(0); i++)
+            for (int j = 0; j < cPlayer.Field.Count(); j++)
             {
-                for (int j = 0; j < cPlayer.Field.Count(); j++)
+                if (cPlayer.Field[j] != null)
                 {
-                    if (cPlayer.Field[j] != null)
-                    {
-                        System.Console.Write("[" + i + ", " + j + "] ");
-                        cPlayer.Field[j].WriteCard();
-                    }
+                    System.Console.Write(j + " ");
+                    cPlayer.Field[j].WriteCard();
                 }
             }
+
             System.Console.WriteLine();
             System.Console.WriteLine("Opponent Field:");
-            for (int i = 0; i < oPlayer.Field.GetLength(0); i++)
+            for (int j = 0; j < oPlayer.Field.Count(); j++)
             {
-                for (int j = 0; j < oPlayer.Field.Count(); j++)
+                if (oPlayer.Field[j] != null)
                 {
-                    if (oPlayer.Field[j] != null)
-                    {
-                        System.Console.Write("[" + i + ", " + j + "] ");
-                        oPlayer.Field[j].WriteCard();
-                    }
+                    System.Console.Write(j + " ");
+                    oPlayer.Field[j].WriteCard();
                 }
             }
+
             System.Console.WriteLine();
-        }
-
-        public void ShowPlayerField(Player P)
-        {
-            var Field = P.Field;
-
-            for (int i = 0; i < Field.GetLength(0); i++)
-            {
-                for (int j = 0; j < Field.Count(); j++)
-                {
-                    if (!(Field[j] == null))
-                        System.Console.Write(" | " + Field[j].Name + " | ");
-                    else
-                        System.Console.Write(" | " + "Empty" + " | ");
-                }
-                System.Console.WriteLine();
-            }
         }
     }
 }

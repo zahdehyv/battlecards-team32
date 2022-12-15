@@ -5,13 +5,13 @@ namespace YUGIOH
         public string Deckname;
         public List<Card> Cards;
 
-        public Deck(string name,List<Card> aCards)
+        public Deck(string name, List<Card> aCards)
         {
             Deckname = name;//SEXO
             Cards = aCards;
         }
 
-        public bool IsEmpty(){return !(Cards.Count() > 0);}
+        public bool IsEmpty() { return !(Cards.Count() > 0); }
 
         public void Add(Card card)
         {
@@ -36,22 +36,13 @@ namespace YUGIOH
             Cards.RemoveAt(index);
         }
 
-        public void ShowDeck(bool AllInfo)
+        public void ShowDeck()
         {
-            System.Console.WriteLine($"Deck {Deckname}");
-            if (AllInfo)
+            System.Console.WriteLine(Deckname);
+            
+            foreach (Card c in Cards)
             {
-                foreach (Card c in Cards)
-                {
-                    c.WriteCard();
-                }
-            }
-            else
-            {
-                foreach (Card c in Cards)
-                {
-                    System.Console.WriteLine(c.Name);
-                }
+                c.WriteCard();
             }
         }
     }
