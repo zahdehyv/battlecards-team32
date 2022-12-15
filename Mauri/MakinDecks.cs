@@ -2,21 +2,12 @@
 using System.IO;
 using System.Collections.Generic;
 using YUGIOH;
+using PBT;
 
 namespace Compiler
 {
     static class MazeCreator
     {
-        static string[] _CargarIndices()
-        {
-            var decksfolder = Directory.GetDirectories("./decks");
-            List<string[]> cardsbydeck = new List<string[]>();
-            foreach (var item in decksfolder)
-            {
-                cardsbydeck.Add(Directory.GetFiles(item));
-            }
-            return decksfolder;
-        }
         public static List<Deck> _Recopilatory()
         {
             List<Deck> list = new List<Deck>();
@@ -26,9 +17,20 @@ namespace Compiler
             }
             return list;
         }
+
+        static string[] _CargarIndices()
+        {
+            // var decksfolder = Directory.GetDirectories("./decks");
+            // List<string[]> cardsbydeck = new List<string[]>();
+            // foreach (var item in decksfolder)
+            // {
+            //     cardsbydeck.Add(Directory.GetFiles(item));
+            // }
+            return Directory.GetDirectories("./decks");
+        }
         static Deck _MakeDeck(string deckpath)
         {
-            System.Console.WriteLine($"Creando deck {Path.GetFileName(deckpath)}");
+            PBTout.PBTPrint($"Creando deck {Path.GetFileName(deckpath)}",100);
             var card = new List<YUGIOH.Card>();
             foreach (var item in Directory.GetFiles(deckpath))
             {
@@ -39,8 +41,12 @@ namespace Compiler
 
         static Card _MakeCard(string cardpath)
         {
-            System.Console.WriteLine($" Creando carta {Path.GetFileNameWithoutExtension(cardpath)}");
+            PBTout.PBTPrint($" Creando carta {Path.GetFileNameWithoutExtension(cardpath)}",70);
             var texto = File.ReadAllLines(cardpath).ToList();
+            var defaultactions = File.ReadAllLines("./defaultactions/defaultactions.txt");
+            for (int i = 0; i < defaultactions.Length; i++)
+                texto.Insert(i, defaultactions[i]);
+
             var stats = new Dictionary<string, int>{
                     {"Life",1},
                     {"Attack",1},
@@ -64,8 +70,8 @@ namespace Compiler
                 {
                     item._Print();
                 }
-                System.Console.WriteLine($"* se ha creado la carta {Path.GetFileNameWithoutExtension(cardpath)} como carta de error");
-                return new Card("|||carta_error|||", stats, new List<Accion>());
+                PBTout.PBTPrint($"* se ha creado la carta {Path.GetFileNameWithoutExtension(cardpath)} como carta de error",80);
+                return new Card($"|||carta_error||| [{Path.GetFileNameWithoutExtension(cardpath)}]", stats, new List<Accion>());
             }
             return new Card(Path.GetFileNameWithoutExtension(cardpath), stats, a.Item2);
         }

@@ -85,12 +85,20 @@ namespace YUGIOH
 
         public void WriteCard()
         {
-            System.Console.Write(Name + " ");
-            foreach (string item in Stats.Keys)
+            System.Console.Write("- "+Name + " ");
+            if (!Name.StartsWith("|||carta_error|||"))
             {
-                System.Console.Write($"  {item}: {Stats[item]}  ");
+                foreach (string item in Stats.Keys)
+                    System.Console.Write($"  {item}: {Stats[item]}  ");
+                System.Console.WriteLine();
             }
-            System.Console.WriteLine();
+            if (Actions.Count > 0)
+            {
+                System.Console.Write(" * Acciones: ");
+                foreach (var item in Actions)
+                    System.Console.Write($"{item.Name}, ");
+                System.Console.WriteLine();
+            }
         }
 
         public void SimpleAttack(Card c)

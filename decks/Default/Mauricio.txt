@@ -1,6 +1,5 @@
-set ife to 25
-set Atack to 13
-st Defense to 10
-set Speed to Lifff
-
-
+set Life t 25
+st Attack to 13
+set Defee to 10
+set Sped to Lfe
+set Speed to /Speed+-+5

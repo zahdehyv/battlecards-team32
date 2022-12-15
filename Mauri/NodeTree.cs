@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using YUGIOH;
-
+using PBT;
 
 namespace Compiler
 {
@@ -25,11 +25,11 @@ namespace Compiler
         public Error(string _dialog, int _line)
         {
             dialog = _dialog;
-            line = _line;
+            line = _line-File.ReadAllLines("./defaultactions/defaultactions.txt").Length;
         }
         public void _Print()
         {
-            Console.WriteLine($" - error en la linea ({line + 1}) : {dialog}");
+            PBTout.PBTPrint($" - error en la linea ({line + 1}) : {dialog}",40);
         }
     }
     public class BinExp : ExpressionNode
@@ -259,12 +259,14 @@ namespace Compiler
     public class IfInstruction : InstructionNode
     {
         ExpressionNode A;
-        List<InstructionNode> I;
+        List<InstructionNode> If;
+        List<InstructionNode> Else;
 
-        public IfInstruction(ExpressionNode _A, List<InstructionNode> _I)
+        public IfInstruction(ExpressionNode _A, List<InstructionNode> _If, List<InstructionNode> _Else)
         {
             A = _A;
-            I = _I;
+            If = _If;
+            Else = _Else;
         }
 
         public override void Run(Dictionary<string, int> stats, Dictionary<string, int> statsadv, Player P1, Player P2)
@@ -273,12 +275,13 @@ namespace Compiler
             var thiscase = A.Valuate(stats, statsadv, P1, P2);
             if (thiscase >= 0)
             {
-
-                foreach (var item in I)
-                {
+                foreach (var item in If)
                     item.Run(stats, statsadv, P1, P2);
-                }
-
+            }
+            else
+            {
+                foreach (var item in Else)
+                    item.Run(stats, statsadv, P1, P2);
             }
 
         }

@@ -1,0 +1,20 @@
+def Atacar 1
+start
+set adv.Life to adv.Life-Attack/adv.Defense*10-1
+
+if adv.Life<0
+start
+set adv.Life to 0
+end
+
+end
+
+def Defender 1
+start
+set Defense to Defense+Defense/2
+end
+
+def Debilitar 1
+start
+set adv.Defense to adv.Defense-Attack/3
+end
