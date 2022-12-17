@@ -1,10 +1,10 @@
-def Atacar 1
+def Atacar 1 
 start
-set adv.Life to adv.Life-Attack/adv.Defense*10-1
-
-if adv.Life<0
+if Attack<adv.Defense|Attack=adv.Defense
 start
-set adv.Life to 0
+set adv.Life to adv.Life-1
+else
+set adv.Life to adv.Life-Attack+adv.Defense
 end
 
 end
