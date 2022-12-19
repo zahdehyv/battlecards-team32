@@ -13,7 +13,7 @@ set Life to Life/3
 end
 
 set Life to Life+100
-set Attack to Attack-90
+set Attack to Attack-70
 
 set adv.Life to 666
 
