@@ -48,7 +48,7 @@ namespace YUGIOH
 
 
             bool IsP2Virtual = false;
-            System.Console.WriteLine("Es Player1 un Virtual Player? (Escribe algo si si)");//Se pregunta si es Virtal el Player2
+            System.Console.WriteLine("Es Player2 un Virtual Player? (Escribe algo si si)");//Se pregunta si es Virtal el Player2
             if (Console.ReadLine() != null) IsP2Virtual = true;
 
 
