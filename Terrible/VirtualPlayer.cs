@@ -2,7 +2,7 @@ namespace YUGIOH
 {
     public class VirtualPlayer : Player
     {
-        public VirtualPlayer(Deck aDeck) : base(aDeck) {}
+        public VirtualPlayer(Deck aDeck) : base(aDeck) { }
 
         public override AccionIndex[] GetActions(Player oP, int oPint, Board board)
         {
@@ -24,57 +24,8 @@ namespace YUGIOH
             // }
             // // Lo que esta entre estos comentarios es una prueba
 
-
-
             return ans;
         }
-
-        public override void PlayCard()
-        {
-            if (IsDeckEmpty() || IsFieldFull()) { return; }
-            int s = GetMoreValuableCard(this.Deck.Cards);
-            PlayCardFromDeck(s, GetFreeSpace());
-            PlayCard();
-            return;
-        }
-
-        public int GetMoreValuableCard(List<Card> a)
-        {
-            int ans = -1;
-
-            for (int i = 0; i < a.Count(); i++)
-            {
-                if (a[i] != null)
-                {
-                    ans = i;
-                    break;
-                }
-
-            }
-
-            int ansVal = a[ans].GetCardValue();
-
-            for (int i = ans; i < a.Count(); i++)
-            {
-                if (a[i] != null)
-                {
-                    var val = a[i].GetCardValue();
-                    if (val > ansVal)
-                    {
-                        ans = i;
-                        ansVal = val;
-                    }
-                }
-            }
-
-            if (ans == -1) System.Console.WriteLine("El array esta vacio en GetMore ValuableCard retorno -1");
-            return ans;
-
-
-        }
-
-
-
         public AccionIndex[] Permutations(AccionIndex[] permutation, int N, int i, Player oP, BoardValue BestOutcome, Board board, AccionIndex[] ans, Board Simulation)
         // UNFINISHED TRY USING CLASS ACCIONINDEX INSTEAD OF TUPLE(PLAYER, INT)
         {
@@ -132,6 +83,52 @@ namespace YUGIOH
             }
             return ans;
         }
+
+
+        public override void PlayCard()
+        {
+            if (IsDeckEmpty() || IsFieldFull()) { return; }
+            int s = GetMoreValuableCard(this.Deck.Cards);
+            PlayCardFromDeck(s, GetFreeSpace());
+            PlayCard();
+            return;
+        }
+
+        public int GetMoreValuableCard(List<Card> a)
+        {
+            int ans = -1;
+
+            for (int i = 0; i < a.Count(); i++)
+            {
+                if (a[i] != null)
+                {
+                    ans = i;
+                    break;
+                }
+
+            }
+
+            int ansVal = a[ans].GetCardValue();
+
+            for (int i = ans; i < a.Count(); i++)
+            {
+                if (a[i] != null)
+                {
+                    var val = a[i].GetCardValue();
+                    if (val > ansVal)
+                    {
+                        ans = i;
+                        ansVal = val;
+                    }
+                }
+            }
+
+            if (ans == -1) System.Console.WriteLine("El array esta vacio en GetMore ValuableCard retorno -1");
+            return ans;
+
+
+        }
+
 
     }
 
