@@ -29,7 +29,7 @@ namespace Compiler
         }
         public void _Print()
         {
-            PBTout.PBTPrint($" - error en la linea ({line + 1}) : {dialog}",40);
+            PBTout.PBTPrint($" - error en la linea ({line + 1}) : {dialog}",40,"red");
         }
     }
     public class BinExp : ExpressionNode

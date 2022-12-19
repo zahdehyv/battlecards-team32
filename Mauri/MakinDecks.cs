@@ -21,7 +21,7 @@ namespace Compiler
         }
         static Deck _MakeDeck(string deckpath)
         {
-            PBTout.PBTPrint($"Creando deck {Path.GetFileName(deckpath)}", 100);
+            PBTout.PBTPrint($"Creando deck {Path.GetFileName(deckpath)}", 100,"cyan");
             var card = new List<Card>();
             foreach (var item in Directory.GetFiles(deckpath))
                 card.Add(_MakeCard(item));
@@ -30,7 +30,7 @@ namespace Compiler
 
         static Card _MakeCard(string cardpath)
         {
-            PBTout.PBTPrint($" Creando carta {Path.GetFileNameWithoutExtension(cardpath)}", 70);
+            PBTout.PBTPrint($" Creando carta {Path.GetFileNameWithoutExtension(cardpath)}", 70,"green");
             var texto = File.ReadAllLines(cardpath).ToList();
             var defaultactions = File.ReadAllLines(DefActions);
             for (int i = 0; i < defaultactions.Length; i++)
@@ -55,7 +55,7 @@ namespace Compiler
                     stats[item] = 0;
                 foreach (var item in errors)
                     item._Print();
-                PBTout.PBTPrint($"* se ha creado la carta {Path.GetFileNameWithoutExtension(cardpath)} como carta de error", 80);
+                PBTout.PBTPrint($"* se ha creado la carta {Path.GetFileNameWithoutExtension(cardpath)} como carta de error", 80,"gray");
                 return new Card($"|X| [{Path.GetFileNameWithoutExtension(cardpath)}]", stats, new List<Accion>());
             }
             return new Card(Path.GetFileNameWithoutExtension(cardpath), stats, a.Item2);

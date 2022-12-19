@@ -20,9 +20,8 @@ foreach (var item in decks)
     System.Console.WriteLine();
 }
 System.Console.WriteLine();
-PBTout.PBTPrint("me cago en todos",350);
 
 
-AnsiConsole.Markup("[underline red]Hello[/] World!");
+
 
 //Game.Start();
