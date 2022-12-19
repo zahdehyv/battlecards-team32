@@ -172,9 +172,12 @@ namespace Compiler
                         {
                             toselect = Convert.ToInt32(decode[2]);
                         }
+                        string desc = "";
+                        for (int p = 3; p < decode.Length; p++)
+                            desc += $"{decode[p]} ";
                         BuiltInst = BuildInst(code, i, errors);
                         i = BuiltInst.Item2;
-                        _Act.Add(new Accion(decode[1], toselect, ParsearInst(BuiltInst.Item1, stats, errors).Item1));
+                        _Act.Add(new Accion(decode[1], toselect, ParsearInst(BuiltInst.Item1, stats, errors).Item1,desc));
                         break;
                     default:
                         errors.Add(new Error($"no reconocida la instruccion {code[i]}", i));

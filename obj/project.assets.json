@@ -72,19 +72,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Chihe\\.nuget\\packages\\": {}
+    "/home/mauri/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Actividades_Docentes\\Prog\\GitHub\\battlecards-team32\\Main.csproj",
+      "projectUniqueName": "/home/mauri/Documents/GitHub/battlecards-team32/Main.csproj",
       "projectName": "Main",
-      "projectPath": "E:\\Actividades_Docentes\\Prog\\GitHub\\battlecards-team32\\Main.csproj",
-      "packagesPath": "C:\\Users\\Chihe\\.nuget\\packages\\",
-      "outputPath": "E:\\Actividades_Docentes\\Prog\\GitHub\\battlecards-team32\\obj\\",
+      "projectPath": "/home/mauri/Documents/GitHub/battlecards-team32/Main.csproj",
+      "packagesPath": "/home/mauri/.nuget/packages/",
+      "outputPath": "/home/mauri/Documents/GitHub/battlecards-team32/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Chihe\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/mauri/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
@@ -128,7 +128,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/home/mauri/.dotnet-6.0/sdk/6.0.100/RuntimeIdentifierGraph.json"
       }
     }
   }
