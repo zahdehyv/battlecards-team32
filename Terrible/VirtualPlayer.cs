@@ -110,7 +110,7 @@ namespace YUGIOH
 
             for (int n = 0; n < N; n++)
             {
-                permutation[i] = new AccionIndex(0, n);
+                permutation[i] = new AccionIndex(0, n, 0);//TO DO: AGREGAR DIFERENTES ACCIONES A LAS PERMUTACIONES
                 ans = Permutations(permutation, N, i + 1, oP, BestOutcome, board, ans, Simulation);
                 Simulation = (Board)board.Clone();
 

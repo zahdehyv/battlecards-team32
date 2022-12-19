@@ -1,0 +1,13 @@
+En Virtual Player Arreglar las permutaciones para que se puedan escoger entre diferentes acciones
+
+
+En Game Terminar el game flow
+
+
+Arreglar el ExecuteActions para que pueda realizar diferentes !!!!!!!!!!!!!!!!
+
+
+Hacer que nada mas detecte 5 acciones cuando cree la carta
+
+
+Modificar la estructura del Game para que no se guarden las cartas en Player 

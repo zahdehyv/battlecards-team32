@@ -55,6 +55,12 @@ namespace YUGIOH
         }
 
 
+        public void ExecuteAction(int AIndex, int Target, Player Oppossing,Player Current )
+        {
+            Actions[AIndex].DoAct(this,Oppossing.Field[Target],Oppossing,Current);
+        }
+
+
         public bool IsDead() { return Stats["Life"] <= 0; }
         //Comprueba si la carta se puede retirar del campo se usa en el metodo Board.UpdateBoard()
 

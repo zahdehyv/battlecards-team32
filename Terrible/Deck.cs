@@ -1,14 +1,29 @@
 namespace YUGIOH
 {
-    public class Deck
+    public class Deck : ICloneable
     {
         public string Deckname;
         public List<Card> Cards;
 
         public Deck(string name, List<Card> aCards)
         {
-            Deckname = name;//SEXO
+            Deckname = name;
             Cards = aCards;
+        }
+
+        public Deck(Deck deck)
+        {
+            Deckname = deck.Deckname;
+            Cards = new List<Card>();
+            foreach (var item in deck.Cards)
+            {
+                Cards.Add((Card)item.Clone());
+            }
+        }
+
+        public Object Clone()
+        {
+            return new Deck(this);
         }
 
         public bool IsEmpty() { return !(Cards.Count() > 0); }
@@ -40,9 +55,16 @@ namespace YUGIOH
         {
             System.Console.WriteLine(Deckname);
             
-            foreach (Card c in Cards)
+
+            for (int i = 0; i < Cards.Count; i++)
             {
-                c.WriteCard();
+                if(Cards[i].Name.StartsWith("|X|"))
+                {
+                    Cards.RemoveAt(i);
+                }
+                
+                if(i < Cards.Count)
+                    Cards[i].WriteCard();
             }
         }
     }

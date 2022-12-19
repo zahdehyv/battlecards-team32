@@ -1,5 +1,0 @@
-set Life t 25
-st Attack to 13
-set Defee to 10
-set Sped to Lfe
-set Speed to /Speed+-+5

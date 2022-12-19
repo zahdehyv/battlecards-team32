@@ -25,3 +25,4 @@ PBTout.PBTPrint("me cago en todos",350);
 
 AnsiConsole.Markup("[underline red]Hello[/] World!");
 
+Game.Start();
