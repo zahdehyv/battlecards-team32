@@ -28,3 +28,5 @@
 /home/mauri/Documents/GitHub/battlecards-team32/obj/Debug/net6.0/ref/Main.dll
 /home/mauri/Documents/GitHub/battlecards-team32/obj/Debug/net6.0/Main.pdb
 /home/mauri/Documents/GitHub/battlecards-team32/obj/Debug/net6.0/Main.genruntimeconfig.cache
+/home/mauri/Documents/GitHub/battlecards-team32/bin/Debug/net6.0/Spectre.Console.dll
+/home/mauri/Documents/GitHub/battlecards-team32/obj/Debug/net6.0/Main.csproj.CopyComplete

@@ -1,6 +1,7 @@
 ﻿using Compiler;
 using YUGIOH;
 using PBT;
+using Spectre.Console;
 // See https://aka.ms/new-console-template for more information
 var decks = MazeCreator._Recopilatory();
 System.Console.WriteLine();
@@ -22,8 +23,5 @@ System.Console.WriteLine();
 PBTout.PBTPrint("me cago en todos",350);
 
 
+AnsiConsole.Markup("[underline red]Hello[/] World!");
 
-
-//Console.Beep(1000,1000);
-//Parser ast= new Parser();
-//System.Console.WriteLine(ast.ParsearExps("3<3+1").Valuate());
