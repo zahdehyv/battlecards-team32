@@ -71,7 +71,7 @@ namespace Compiler
                     item._Print();
                 }
                 PBTout.PBTPrint($"* se ha creado la carta {Path.GetFileNameWithoutExtension(cardpath)} como carta de error",80);
-                return new Card($"|||carta_error||| [{Path.GetFileNameWithoutExtension(cardpath)}]", stats, new List<Accion>());
+                return new Card($"|X| [{Path.GetFileNameWithoutExtension(cardpath)}]", stats, new List<Accion>());
             }
             return new Card(Path.GetFileNameWithoutExtension(cardpath), stats, a.Item2);
         }

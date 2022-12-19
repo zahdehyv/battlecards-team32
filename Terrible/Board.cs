@@ -33,6 +33,7 @@ namespace YUGIOH
         public void Play()
         {
             Round += 1;
+
             while (!End())
             {
                 System.Console.WriteLine();
@@ -45,18 +46,6 @@ namespace YUGIOH
                 var P1Accions = P1.GetActions(P2, 1, this);
                 var P2Accions = P2.GetActions(P1, 0, this);
 
-                // System.Console.WriteLine("Player1 Accions");
-                // foreach (var element in P1Accions)
-                // {
-                //     System.Console.WriteLine(element.Player + ", " + element.FieldIndex);
-                // }
-
-                // System.Console.WriteLine("Player2 Accions");
-                // foreach (var element in P2Accions)
-                // {
-                //     System.Console.WriteLine(element.Player + ", " + element.FieldIndex);
-                // }
-                // Console.ReadLine();
 
                 List<(Player, int)> AccionOrder = new List<(Player, int)>();
                 var AllCardsInField = GetAllCardsInFieldIndex();
@@ -92,11 +81,16 @@ namespace YUGIOH
 
                     var attacked_card = TargetPlayer.Field[TargetIndex];//Aqui selecciono a carta sobre la que se realizara la accion
 
+                    var AccionToExecute = AccionForCurrentCard.Index;//Aqui cojo el Index de la accion a realizar
+
+
                     if (attacked_card != null && P1.Field[e.Item2] != null)
                     {
-                        P1.Field[e.Item2].SimpleAttack(attacked_card); //Aca en vez de Simpple attack tiene que llamar 
-                                                                       // al accion escogido por el player
-                        System.Console.WriteLine("La carta ");
+                        // P1.Field[e.Item2].SimpleAttack(attacked_card); //Aca en vez de Simpple attack tiene que llamar 
+                        //                                                // al accion escogido por el player
+                        P1.ExecuteAction(e.Item2, AccionToExecute, TargetIndex, P2);
+
+                        System.Console.WriteLine("La carta ");//El resto es para imprimir lo que esta sucediendo
                         P1.Field[e.Item2].WriteCard();
                         System.Console.WriteLine("De Player1");//
                         System.Console.WriteLine("Ejecuto una accion sobre la carta");
@@ -118,11 +112,16 @@ namespace YUGIOH
 
                     var attacked_card = TargetPlayer.Field[TargetIndex];
 
-                    if (attacked_card != null && P2.Field[e.Item2] != null )
+                    var AccionToExecute = AccionForCurrentCard.Index;//Aqui cojo el Index de la accion a realizar
+
+
+                    if (attacked_card != null && P2.Field[e.Item2] != null)
                     {
-                        P2.Field[e.Item2].SimpleAttack(attacked_card); //Aca en vez de Simpple attack tiene que llamar 
-                                                                       // al accion escogido por el player
-                        System.Console.WriteLine("La carta ");
+                        // P2.Field[e.Item2].SimpleAttack(attacked_card); //Aca en vez de Simpple attack tiene que llamar 
+                        //                                                // al accion escogido por el player
+                        P2.ExecuteAction(e.Item2, AccionToExecute, TargetIndex, P1);
+
+                        System.Console.WriteLine("La carta ");//El resto es para imprimir lo que esta sucediendo
                         P2.Field[e.Item2].WriteCard();
                         System.Console.WriteLine("De Player2");
                         System.Console.WriteLine("Ejecuto una accion sobre la carta");
@@ -135,10 +134,9 @@ namespace YUGIOH
                     UpdateBoard();
                 }
             }
-            System.Console.WriteLine("ESTA ES LA PRUEBA");
-            ShowFieldData();//THIS IS A TEST
+            System.Console.WriteLine("All Accions where Executed");//This prints the resulting field
+            ShowFieldData();
             Console.ReadLine();
-            UpdateBoard();
         }
 
 
@@ -149,18 +147,24 @@ namespace YUGIOH
             return P2;
         }
 
-        public void ExecuteActions(AccionIndex[] Accions, Player cP)
+        public void ExecuteActions(AccionIndex[] Accions, Player cP)//This Method is for VirtualPlayer only
         {
 
             for (int i = 0; i < Accions.Length; i++)
             {
-                var t = Accions[i];
-                var TargetPlayer = P1;
-                if (t.Player != 0) { TargetPlayer = P2; }
-                var TargetIndex = t.FieldIndex;
+                var CurrentAccionIndex = Accions[i];
+
+                var TargetPlayerIndex = CurrentAccionIndex.Player;
+                var TargetPlayer = GetPlayerFromInt(TargetPlayerIndex);
+
+                var TargetIndex = CurrentAccionIndex.FieldIndex;
+
+                var AccionToExecute = CurrentAccionIndex.Index;
+
                 if (TargetPlayer.Field[TargetIndex] != null && cP.Field[i] != null)
                 {
-                    cP.Field[i].SimpleAttack(TargetPlayer.Field[TargetIndex]);
+                    cP.ExecuteAction(i, AccionToExecute, TargetIndex, TargetPlayer);
+                    // cP.Field[i].SimpleAttack(TargetPlayer.Field[TargetIndex]);
                 }
             }
         }
@@ -221,6 +225,7 @@ namespace YUGIOH
             return (new BoardValue(cP.GetFieldValue(), oP.GetFieldValue()));
         }
 
+
         public void UpdateBoard()
         {
             for (int i = 0; i < P1.Field.GetLength(0); i++)
@@ -250,6 +255,7 @@ namespace YUGIOH
                 }
             }
         }
+
 
         public bool IsFieldEmpty() { return P1.IsFieldEmpty() && P2.IsFieldEmpty(); }
         public bool IsMaskComplete(bool[,] mask)

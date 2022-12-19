@@ -3,8 +3,8 @@ namespace YUGIOH
     // HAND ATTRIBUTE NOT AVAILABLE
     public class Player : ICloneable
     {
-        // public List<Card> Hand;
         public Card[] Field;
+
         public Deck Deck;
 
         public Player(Deck aDeck)
@@ -13,6 +13,7 @@ namespace YUGIOH
             // Hand = new List<Card>();
             Field = new Card[4];
         }
+
 
         public Player(Player player)
         {
@@ -23,11 +24,9 @@ namespace YUGIOH
                     Field[i] = (Card)player.Field[i].Clone();
             }
             Deck = new Deck(player.Deck.Deckname, player.Deck.Cards);
-            // foreach (var item in player.Deck)
-            // {
-            //     Deck.Add((Card)item.Clone());
-            // }
+
         }
+
 
         public Player(Deck aDeck, Card[] Field)
         {
@@ -36,10 +35,12 @@ namespace YUGIOH
             // Hand = new List<Card>();
         }
 
+
         public Object Clone()
         {
             return new Player(this);
         }
+
 
         public int GetFieldValue()
         {
@@ -55,42 +56,82 @@ namespace YUGIOH
         public string WritePlayer(Board board)
         {
             if (this == board.P1)
-                return("Player1");
-            else return("Player2");
+                return ("Player1");
+            else return ("Player2");
         }
+
 
         virtual public AccionIndex[] GetActions(Player oP, int oPint, Board board)
         {
-            AccionIndex[] ans = new AccionIndex[4];//Es 4 porque el terrno es de tamanno fijo 4
+            AccionIndex[] ans = new AccionIndex[4];//Es 4 porque el terreno es de tamanno fijo 4
+
+            if(this == board.P1)System.Console.WriteLine("Player1");
+            else System.Console.WriteLine("Player2");
 
             for (int i = 0; i < 4; i++)
             {
-                if (this.Field[i] != null)
+                var CurrentCard = Field[i];
+
+                if (CurrentCard != null)
                 {
-                    System.Console.WriteLine("Escoge a quien atacara la carta " + (i + 1));
+
+                    ShowAllTheField(oP);// Esto es para imprimir el tablero y las opciones
                     Console.ReadLine();
-                    System.Console.WriteLine();
-                    System.Console.WriteLine("My Field");
-                    System.Console.WriteLine();
-                    ShowField();
+                    CurrentCard.WriteCard();
+                    CurrentCard.WriteAccions();
 
-                    // int PlayerAffectedint = GetSelection(2, "Player to be affected");
-                    // // int Accion = GetSelection(2,"Accion to take") AQUI EL TIPO DEBE ESCOGER LA ACCION A EJECUTAR
+                    int PlayerIndex = GetSelection(2, "Player to affect");//Here Iget the player that the accion is directed to
 
-                    // Player PlayerAffected = P1;
-                    // if (PlayerAffectedint == 1) { PlayerAffected = P2; }
 
-                    System.Console.WriteLine("Opponent Field");
-                    System.Console.WriteLine();
-                    oP.ShowField();
-                    int CardIndex = GetSelection(4, "targeted card");
+                    ShowAllTheField(oP);// Esto es para imprimir el tablero y las opciones
+                    Console.ReadLine();
+                    CurrentCard.WriteCard();
+                    CurrentCard.WriteAccions();
 
-                    ans[i] = new AccionIndex(oPint, CardIndex);
+                    int AccionIndex = GetSelection(5, "accion to take");// Here I get the accion to be executed
+
+
+                    ShowAllTheField(oP);// Esto es para imprimir el tablero y las opciones
+                    Console.ReadLine();
+
+                    int CardIndex = GetSelection(4, "targeted card");//Here I get the Index of the card that will be affected
+
+
+                    ans[i] = new AccionIndex(PlayerIndex, CardIndex, AccionIndex);//Here are created the AccionIndexes (PlayerIndex, CardIndex, AccionIndex)
                 }
             }
 
             return ans;
         }
+
+
+        public void ExecuteAction(int CardIndex,int AccionIndex, int TargetIndex, Player OppossingPlayer)
+        {
+            Field[CardIndex].ExecuteAction(AccionIndex,TargetIndex,OppossingPlayer,this);
+        }
+
+
+        public Player GetPlayerFromInt(int p, Player oP)
+        // Recibe un entero y devuelve el jugador al que esta haciendo referencia (0 se utiliza para player1 y cualquier otro numero para player2)
+        {
+            if (p == 0) return this;
+            return oP;
+        }
+
+
+        public void ShowAllTheField(Player oP)
+        {
+
+            System.Console.WriteLine();
+            System.Console.WriteLine("My Field");
+            System.Console.WriteLine();
+            ShowField();
+
+            System.Console.WriteLine("Opponent Field");
+            System.Console.WriteLine();
+            oP.ShowField();
+        }
+
 
         public void ShowField()
         {
@@ -103,18 +144,21 @@ namespace YUGIOH
             }
         }
 
+
         public virtual void PlayCard()
         {
             if (IsDeckEmpty() || IsFieldFull()) { return; }
             ShowDeck();
-            int s = GetSelection(Deck.Cards.Count, "a card to play");
+            int s = GetSelection(Deck.Cards.Count, " card to play");
             PlayCardFromDeck(s, GetFreeSpace());
             PlayCard();
             return;
         }
 
+
         public int GetSelection(int size, string w2s)
         {
+            System.Console.WriteLine("Choose a " + w2s);
             var Entry = Console.ReadLine();
             int choice = 0;
 
@@ -128,9 +172,10 @@ namespace YUGIOH
                 System.Console.WriteLine("Indexa bien comunista >=(");
                 choice = Convert.ToInt32(Console.ReadLine());
             }
-            
+
             return choice - 1;
         }
+
 
         private bool IsIndexOk(int index, int size)
         {
@@ -138,6 +183,7 @@ namespace YUGIOH
                 return false;
             return true;
         }
+
 
         public void ShowDeck()
         {
@@ -147,7 +193,9 @@ namespace YUGIOH
             }
         }
 
+
         public bool IsDeckEmpty() { return !(Deck.Cards.Count() > 0); }
+
 
         public bool IsFieldFull()
         {
@@ -156,6 +204,7 @@ namespace YUGIOH
                     return false;
             return true;
         }
+
 
         public int GetFreeSpace()
         {
@@ -166,6 +215,8 @@ namespace YUGIOH
             System.Console.WriteLine("Entro a GetFreeSpace con el campo lleno y no deberia, retorno 0");
             return 0;
         }
+
+
         public bool IsFieldEmpty()
         {
             foreach (Card c in Field)
@@ -175,34 +226,12 @@ namespace YUGIOH
         }
 
 
-        // public void ShowHand()
-        // {
-        //     foreach (Card c in Hand)
-        //         c.WriteCard();
-        // }
-
-        // This Method Plays A card in the board it assumes the space is empty
-        // public void PlayCardFromHand(int iHand, int iField0, int iField1)
-        // {
-        //     Field[iField0, iField1] = Hand[iHand];
-        //     Hand.RemoveAt(iHand);
-        // }
-
         public void PlayCardFromDeck(int iDeck, int iField)
         {
             Field[iField] = Deck.Cards[iDeck];
             Deck.Cards.RemoveAt(iDeck);
         }
-        // public void Draw(int index)
-        // {
-        //     Hand.Add(Deck.Cards[index]);
-        //     Deck.Erase(index);
-        // }
 
-
-        // public bool IsDeckEmpty(){return Deck.IsEmpty();}
-
-        // public bool IsEmpty( int iDim0, int iDim1) { return (Field[iDim0, iDim1] == null); }
 
     }
 }
