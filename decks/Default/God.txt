@@ -1,5 +1,5 @@
 set Life to 100
-set Defense Speed to Life/2
+set Defense Speed to Life/8
 set Attack to Life
 
 if 2=2&1<3

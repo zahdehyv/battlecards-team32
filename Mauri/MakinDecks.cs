@@ -3,25 +3,30 @@ using System.IO;
 using System.Collections.Generic;
 using YUGIOH;
 using PBT;
+using Spectre.Console;
 
 namespace Compiler
 {
     static class MazeCreator
     {
-        static string DeckDir="./decks";
-        static string DefActions="./defaultactions/defaultactions.txt";
+        static string DeckDir = "./decks";
+        static string DefActions = "./defaultactions/defaultactions.txt";
 
         public static List<Deck> _Recopilatory()
-        {
-            List<Deck> list = new List<Deck>();
+        {//Dictionary<string,Deck> decks=new Dictionary<string, Deck>();
+            List<Deck> decks = new List<Deck>();
             var indexes = Directory.GetDirectories(DeckDir);
             foreach (var item in indexes)
-                list.Add(_MakeDeck(item));
-            return list;
+            {
+                Deck deck = _MakeDeck(item);
+                decks.Add(deck);
+            }
+            //list.Add(_MakeDeck(item));
+            return decks;
         }
         static Deck _MakeDeck(string deckpath)
         {
-            PBTout.PBTPrint($"Creando deck {Path.GetFileName(deckpath)}", 100,"cyan");
+            PBTout.PBTPrint($"Creando deck {Path.GetFileName(deckpath)}", 100, "cyan");
             var card = new List<Card>();
             foreach (var item in Directory.GetFiles(deckpath))
                 card.Add(_MakeCard(item));
@@ -30,7 +35,8 @@ namespace Compiler
 
         static Card _MakeCard(string cardpath)
         {
-            PBTout.PBTPrint($" Creando carta {Path.GetFileNameWithoutExtension(cardpath)}", 70,"green");
+             PBTout.PBTPrint($" Creando carta {Path.GetFileNameWithoutExtension(cardpath)}", 70,"green");
+
             var texto = File.ReadAllLines(cardpath).ToList();
             var defaultactions = File.ReadAllLines(DefActions);
             for (int i = 0; i < defaultactions.Length; i++)
@@ -45,7 +51,8 @@ namespace Compiler
             List<Error> errors = new List<Error>();
             var a = Parser.ParsearInst(texto, stats, errors);
             var emptyplayer = new Player(new Deck("", new List<Card>()));
-            
+
+
             foreach (var item in a.Item1)
                 item.Run(stats, stats, emptyplayer, emptyplayer);
 
@@ -55,7 +62,7 @@ namespace Compiler
                     stats[item] = 0;
                 foreach (var item in errors)
                     item._Print();
-                PBTout.PBTPrint($"* se ha creado la carta {Path.GetFileNameWithoutExtension(cardpath)} como carta de error", 80,"gray");
+                PBTout.PBTPrint($"* se ha creado la carta {Path.GetFileNameWithoutExtension(cardpath)} como carta de error", 80, "gray");
                 return new Card($"|X| [{Path.GetFileNameWithoutExtension(cardpath)}]", stats, new List<Accion>());
             }
             return new Card(Path.GetFileNameWithoutExtension(cardpath), stats, a.Item2);

@@ -1,0 +1,4 @@
+set Life to 9
+set Speed to 11
+set Defense to 3
+set Attack to 17
