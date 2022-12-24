@@ -1,0 +1,8 @@
+set Life to 29
+set Defense to 37
+set Speed to 46
+set Attack to 7
+
+def Actuar 1
+start
+end

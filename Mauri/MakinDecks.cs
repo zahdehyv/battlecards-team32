@@ -22,11 +22,14 @@ namespace Compiler
                 decks.Add(deck);
             }
             //list.Add(_MakeDeck(item));
+            System.Console.WriteLine();
+            AnsiConsole.Write(new Markup("[underline red]continue[/]"));
+            Console.ReadKey(true);
             return decks;
         }
         static Deck _MakeDeck(string deckpath)
         {
-            PBTout.PBTPrint($"Creando deck {Path.GetFileName(deckpath)}", 100, "cyan");
+            PBTout.PBTPrint($"Creando deck {Path.GetFileName(deckpath)}", 90, "cyan");
             var card = new List<Card>();
             foreach (var item in Directory.GetFiles(deckpath))
                 card.Add(_MakeCard(item));
@@ -35,7 +38,7 @@ namespace Compiler
 
         static Card _MakeCard(string cardpath)
         {
-             PBTout.PBTPrint($" Creando carta {Path.GetFileNameWithoutExtension(cardpath)}", 70,"green");
+            PBTout.PBTPrint($" Creando carta {Path.GetFileNameWithoutExtension(cardpath)}", 30, "green");
 
             var texto = File.ReadAllLines(cardpath).ToList();
             var defaultactions = File.ReadAllLines(DefActions);
@@ -50,7 +53,7 @@ namespace Compiler
                 };
             List<Error> errors = new List<Error>();
             var a = Parser.ParsearInst(texto, stats, errors);
-            var emptyplayer = new Player(new Deck("", new List<Card>()));
+            var emptyplayer = new Player(new Deck("", new List<Card>()), "");
 
 
             foreach (var item in a.Item1)

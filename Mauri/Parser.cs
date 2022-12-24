@@ -6,10 +6,6 @@ namespace Compiler
 
     public static class Parser
     {
-        // public static bool ValidINST(string a)
-        // {
-        //     return !(a.StartsWith("set") || a.StartsWith("if") || a.StartsWith("while") || a.StartsWith("def") || a.StartsWith("end") || a.StartsWith("for") || a.StartsWith("start")|| a.StartsWith("else"));
-        // }
         static (string, bool) GetAsignable(string code)
         {
             if (code.StartsWith("adv."))

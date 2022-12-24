@@ -1,0 +1,18 @@
+set Life to 26
+set Attack to 36
+set Defense to 10
+set Speed to 7
+
+
+def Cataclism 1
+start
+if self.exist(Life>600)
+start
+set adv.Life to 0
+end
+end
+
+def Heal 1
+start
+set adv.Life to adv.Life+adv.Life/2
+end

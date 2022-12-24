@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "Bfw4KGezRIMAK/57I10JhVUo5ro2ObS5Gwodes3UtdgpBPAeYXq9/gn8nlfNViNw8MWVjOwhRkK8vs0/yM3t6Q==",
+  "dgSpecHash": "SCvlk+0J5yRsgaY/DkLPo7UihyvMogrW7/vyMUwuF6moJBFujexIUDPeQhunYD6qAfqNMNK//9J3+DLK7lFYbA==",
   "success": true,
-  "projectFilePath": "/home/mauri/Documents/GitHub/battlecards-team32/Main.csproj",
+  "projectFilePath": "E:\\Actividades_Docentes\\Prog\\GitHub\\battlecards-team32\\Main.csproj",
   "expectedPackageFiles": [
-    "/home/mauri/.nuget/packages/spectre.console/0.45.0/spectre.console.0.45.0.nupkg.sha512",
-    "/home/mauri/.nuget/packages/system.memory/4.5.5/system.memory.4.5.5.nupkg.sha512"
+    "C:\\Users\\Chihe\\.nuget\\packages\\spectre.console\\0.45.0\\spectre.console.0.45.0.nupkg.sha512",
+    "C:\\Users\\Chihe\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512"
   ],
   "logs": []
 }

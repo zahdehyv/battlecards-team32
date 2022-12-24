@@ -1,15 +1,21 @@
+using PBT;
+using Compiler;
+using Spectre.Console;
+
 namespace YUGIOH
 {
     // HAND ATTRIBUTE NOT AVAILABLE
     public class Player : ICloneable
     {
+        public string Name { get; private set; }
         public Card[] Field;
 
         public Deck Deck;
 
-        public Player(Deck aDeck)
+        public Player(Deck aDeck, string _name)
         {
             Deck = aDeck;
+            Name = _name;
             // Hand = new List<Card>();
             Field = new Card[4];
         }
@@ -17,6 +23,7 @@ namespace YUGIOH
 
         public Player(Player player)
         {
+            Name = player.Name;
             Field = new Card[4];
             for (int i = 0; i < player.Field.Count(); i++)
             {
@@ -28,8 +35,9 @@ namespace YUGIOH
         }
 
 
-        public Player(Deck aDeck, Card[] Field)
+        public Player(Deck aDeck, Card[] Field, string _name)
         {
+            Name = _name;
             this.Deck = aDeck;
             this.Field = Field;
             // Hand = new List<Card>();
@@ -39,6 +47,68 @@ namespace YUGIOH
         public Object Clone()
         {
             return new Player(this);
+        }
+
+        public virtual string PLAY(Player adversary, Board board)
+        {
+            board.UpdateBoard();
+
+            PBTout.PrintField(adversary, this);
+            PlayCard(adversary);
+            List<Card> ATTACKERS = new List<Card>();
+            foreach (var item in this.Field)
+                if (item != null)
+                    ATTACKERS.Add(item);
+
+            while (ATTACKERS.Count > 0)
+            {
+            Back01:
+                var caster = PBTout.GamePrompt<Card>($"{this.Name}, realice su jugada: ", (x => x.Name), ATTACKERS.ToArray());
+                List<Accion> actions = new List<Accion>();
+                actions.AddRange(caster.Actions);
+                actions.Add(new Accion("Pasar", 1, new List<InstructionNode>(), ""));
+                actions.Add(new Accion("Volver", 1, new List<InstructionNode>(), ""));
+            Back02:
+                var action = PBTout.GamePrompt<Accion>($"{this.Name}, seleccione la accion: ", (x => x.Name), actions.ToArray());
+
+                if (action.Name == "Pasar")
+                    goto None;
+                if (action.Name == "Volver")
+                    goto Back01;
+
+                var objetiveplayer = PBTout.GamePrompt<Player>($"{this.Name}, a quien afectara la accion: ", (x => x.Name), new[] { adversary, this });
+                List<Card> TARGETS = new List<Card>();
+
+                foreach (var item in objetiveplayer.Field)
+                    if (item != null)
+                        TARGETS.Add(item);
+
+                TARGETS.Add(new Card("Volver", 1, 1, 1, 1, new List<Accion>()));
+
+                var target = PBTout.GamePrompt<Card>($"{this.Name}, seleccione al objetivo a {action.Name}: ", (x => x.Name), TARGETS.ToArray());
+                if (target.Name == "Volver")
+                    goto Back02;
+                action.DoAct(caster, target, this, adversary);
+                PBTout.PBTPrint($"{caster.Name} ha usado {action.Name} en {target.Name}", 200, "white");
+                goto Some;
+            None:
+                PBTout.PBTPrint($"{caster.Name} ha saltado su turno", 200, "white");
+            Some:
+                Console.ReadKey(true);
+                ATTACKERS.Remove(caster);
+                board.UpdateBoard();
+                PBTout.PrintField(adversary, this);
+                if (board.End())
+                {
+                    Console.Clear();
+                    return board.GetWinner();
+                }
+            }
+            System.Console.WriteLine();
+            System.Console.WriteLine();
+            AnsiConsole.Markup($"[red]TERMINAR TURNO de {Name}[/]");
+            Console.ReadKey(true);
+            return adversary.PLAY(this, board);
         }
 
 
@@ -60,54 +130,17 @@ namespace YUGIOH
             else return ("Player2");
         }
 
-
-        virtual public AccionIndex[] GetActions(Player oP, int oPint, Board board)
+        public void ExecuteAction(int CardIndex, int AccionIndex, int TargetIndex, Player TargetPlayer, Player OppossingPlayer, Board board)
         {
-            AccionIndex[] ans = new AccionIndex[4];//Es 4 porque el terreno es de tamanno fijo 4
-
-            if(this == board.P1)System.Console.WriteLine("Player1");
-            else System.Console.WriteLine("Player2");
-
-            for (int i = 0; i < 4; i++)
-            {
-                var CurrentCard = Field[i];
-
-                if (CurrentCard != null)
-                {
-
-                    ShowAllTheField(oP);// Esto es para imprimir el tablero y las opciones
-                    Console.ReadLine();
-                    CurrentCard.WriteCard();
-                    CurrentCard.WriteAccions();
-
-                    int PlayerIndex = GetSelection(2, "Player to affect");//Here Iget the player that the accion is directed to
-
-
-                    ShowAllTheField(oP);// Esto es para imprimir el tablero y las opciones
-                    Console.ReadLine();
-                    CurrentCard.WriteCard();
-                    CurrentCard.WriteAccions();
-
-                    int AccionIndex = GetSelection(5, "accion to take");// Here I get the accion to be executed
-
-
-                    ShowAllTheField(oP);// Esto es para imprimir el tablero y las opciones
-                    Console.ReadLine();
-
-                    int CardIndex = GetSelection(4, "targeted card");//Here I get the Index of the card that will be affected
-
-
-                    ans[i] = new AccionIndex(PlayerIndex, CardIndex, AccionIndex);//Here are created the AccionIndexes (PlayerIndex, CardIndex, AccionIndex)
-                }
-            }
-
-            return ans;
+            Field[CardIndex].ExecuteAction(AccionIndex, TargetIndex, TargetPlayer, board.GetIntFromPlayer(OppossingPlayer), board.GetIntFromPlayer(this), board);
+            // int AIndex, int Target,Player TargetPlayer, int OppossingPlayer, int CurrentPlayer, Board board
         }
 
 
-        public void ExecuteAction(int CardIndex,int AccionIndex, int TargetIndex, Player OppossingPlayer)
+
+        public void ExecuteAction(int CardIndex, int AccionIndex, int TargetIndex, Player OppossingPlayer)
         {
-            Field[CardIndex].ExecuteAction(AccionIndex,TargetIndex,OppossingPlayer,this);
+            Field[CardIndex].ExecuteAction(AccionIndex, TargetIndex, OppossingPlayer, this);
         }
 
 
@@ -145,13 +178,16 @@ namespace YUGIOH
         }
 
 
-        public virtual void PlayCard()
+        public virtual void PlayCard(Player adversary)
         {
             if (IsDeckEmpty() || IsFieldFull()) { return; }
-            ShowDeck();
-            int s = GetSelection(Deck.Cards.Count, " card to play");
-            PlayCardFromDeck(s, GetFreeSpace());
-            PlayCard();
+            PBTout.ShowSummonable(Deck);
+            var card = PBTout.GamePrompt<Card>($"{this.Name}, juegue una Carta: ", (x => x.Name), Deck.Cards.ToArray());
+            PlayCardFromDeck(card, GetFreeSpace());
+            PBTout.PBTPrint($"{Name} ha invocado a {card.Name}", 200, "white");
+            Console.ReadKey(true);
+            PBTout.PrintField(adversary, this);
+            this.PlayCard(adversary);
             return;
         }
 
@@ -226,10 +262,10 @@ namespace YUGIOH
         }
 
 
-        public void PlayCardFromDeck(int iDeck, int iField)
+        public void PlayCardFromDeck(Card card, int iField)
         {
-            Field[iField] = Deck.Cards[iDeck];
-            Deck.Cards.RemoveAt(iDeck);
+            Field[iField] = card;
+            Deck.Cards.Remove(card);
         }
 
 

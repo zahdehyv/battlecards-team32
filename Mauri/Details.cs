@@ -3,6 +3,8 @@ using YUGIOH;
 
 namespace PBT
 {
+
+
     public static class PBTout
     {
         public static void PBTPrint(string toprint, long ms, string color)
@@ -18,28 +20,39 @@ namespace PBT
         }
 
 
-        public static void PrintField(List<Deck> decks)
+        public static void PrintField(params Player[] fields)
         {
             Console.Clear();
             var field = new Table();
             field.AddColumn("FIELD");
             //field.AddRow(cardsgrid);
-            foreach (var deck in decks)
+            foreach (var player in fields)
             {
                 var currentdeck = new Table();
+                currentdeck.AddColumn($"{player.Name}'s field");
                 var cardsgrid = new Grid();
                 cardsgrid.AddColumn();
                 cardsgrid.AddColumn();
                 cardsgrid.AddColumn();
                 cardsgrid.AddColumn();
 
-                currentdeck.AddColumn(new TableColumn(cardsgrid));
+                currentdeck.AddRow(cardsgrid);
 
 
                 List<Table> cardsthere = new List<Table>();
-                foreach (var card in deck.Cards)
+                foreach (var card in player.Field)
                 {
                     var carta = new Table();
+                    if (card == null)
+                    {
+                        TableColumn wide = new TableColumn(new Panel("_EMPTY_"));
+                        wide.Width = 21;
+                        carta.AddColumn(wide);
+                        cardsthere.Add(carta);
+                        continue;
+                    }
+
+
                     if (!card.Name.Contains('['))
                     {
                         TableColumn wide = new TableColumn(new Panel(card.Name));
@@ -83,7 +96,7 @@ namespace PBT
         }
 
 
-        public static T GamePrompt<T>(string title, Func<T, string> converter, params T[] options)
+        public static T GamePrompt<T>(string title, Func<T, string> converter, params T[] options) where T : notnull
         {
             return AnsiConsole.Prompt(new SelectionPrompt<T>()
             .Title(title)
@@ -91,5 +104,41 @@ namespace PBT
             .AddChoices(options));
         }
 
+        public static string AskString(string title)
+        {
+            string name = AnsiConsole.Ask<string>(title);
+            switch (name)
+            {
+                case null:
+                    return "Pancracio";
+                case "":
+                    return "Pancracio";
+                default:
+                    return name;
+            }
+        }
+        public static void ActualValues(params string[] values)
+        {
+            Console.Clear();
+            foreach (var item in values)
+            {
+                Console.WriteLine($"{item}");
+            }
+            System.Console.WriteLine();
+        }
+        public static void ShowSummonable(Deck deck)
+        {
+            var table = new Table();
+            foreach (var item in deck.Cards)
+            {
+                var grid = new Grid();
+                grid.AddColumn();
+                grid.AddRow(new Markup($"[red]{item.Name}[/]"));
+                foreach (var itemi in item.Stats.Keys)
+                    grid.AddRow($"{itemi}: {item.Stats[itemi]}");
+                table.AddColumn(new TableColumn(grid));
+            }
+            AnsiConsole.Write(table);
+        }
     }
 }

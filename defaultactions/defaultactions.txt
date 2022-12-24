@@ -11,10 +11,10 @@ end
 
 def Defender 1
 start
-set Defense to Defense+Defense/2
+set adv.Defense to adv.Defense+5
 end
 
 def Debilitar 1
 start
-set adv.Defense to adv.Defense-Attack/3
+set adv.Defense to adv.Defense-10
 end

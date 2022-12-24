@@ -2,26 +2,17 @@
 using YUGIOH;
 using PBT;
 using Spectre.Console;
-// See https://aka.ms/new-console-template for more information
-var decks = MazeCreator._Recopilatory();
+
+Console.Clear();
+Console.WriteLine();
+AnsiConsole.Write(new FigletText("WELLCUM")
+.Centered()
+.Color(Color.Red));
+AnsiConsole.Write(new FigletText("PLAYERS!")
+.Centered()
+.Color(Color.Blue));
 System.Console.WriteLine();
-foreach (var item in decks)
-{
-    item.ShowDeck();
-    System.Console.WriteLine();
-}
-var emptyplayer = new Player(new Deck("a", new List<Card>()));
-decks[0].Cards[1].Actions[0].DoAct(decks[0].Cards[1], decks[0].Cards[0], emptyplayer, emptyplayer);
+AnsiConsole.Write(new Markup("[blue]...press [/][underline red]any key[/][blue] to continue...[/]").Centered());
+Console.ReadKey(true);
 
-System.Console.WriteLine();
-foreach (var item in decks)
-{
-    item.ShowDeck();
-    System.Console.WriteLine();
-}
-System.Console.WriteLine();
-
-
-
-
-//Game.Start();
+Game.MainMenu(new List<Deck>());

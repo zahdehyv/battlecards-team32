@@ -1,4 +1,77 @@
 
+// Antiguo metodo del VirtualPlayer
+
+        // public AccionIndex[] Permutations(AccionIndex[] permutation, int N, int i, Player oP, BoardValue BestOutcome, Board board, AccionIndex[] ans, Board Simulation)
+        // // UNFINISHED TRY USING CLASS ACCIONINDEX INSTEAD OF TUPLE(PLAYER, INT)
+        // {
+        //     if (i == permutation.Length)
+        //     {
+        //         // Simulation.ShowFieldData();
+        //         // Console.ReadLine();
+
+        //         Simulation.ExecuteActions(permutation, Simulation.P2);
+
+        //         // Simulation.ShowFieldData();
+        //         // Console.ReadLine();
+
+        //         var Value = Simulation.GetBoardValue(Simulation.P2, Simulation.P1);
+
+        //         // System.Console.WriteLine("Antes del if Value " + Value.cpValue + " " + Value.opValue);
+        //         // Console.ReadLine();
+
+        //         if (Value.cpValue >= BestOutcome.cpValue && Value.opValue < BestOutcome.opValue)
+        //         {
+        //             BestOutcome.cpValue = Value.cpValue;
+        //             BestOutcome.opValue = Value.opValue;
+        //             ans = (AccionIndex[])permutation.Clone();
+        //         }
+
+        //         // System.Console.WriteLine();
+        //         // System.Console.WriteLine("Value " + Value.cpValue + " " + Value.opValue);
+        //         // System.Console.WriteLine("BestOutcome " + BestOutcome.cpValue + " " + BestOutcome.opValue);
+        //         // System.Console.WriteLine();
+
+        //         return ans;
+        //     }
+
+        //     for (int n = 0; n < N; n++)
+        //     {
+        //         permutation[i] = new AccionIndex(0, n, 0);//TO DO: AGREGAR DIFERENTES ACCIONES A LAS PERMUTACIONES
+        //         ans = Permutations(permutation, N, i + 1, oP, BestOutcome, board, ans, Simulation);
+        //         Simulation = (Board)board.Clone();
+
+        //         // // Lo que esta entre estos comentarios es una prueba
+        //         // System.Console.WriteLine();
+        //         // System.Console.WriteLine("ANSWER");
+        //         // foreach (var item in ans)
+        //         // {
+        //         //     if (item == null) { System.Console.WriteLine("Null"); }
+        //         //     else
+        //         //     {
+        //         //         System.Console.Write(item.Player + ", ");
+        //         //         System.Console.WriteLine(item.FieldIndex);
+        //         //     }
+        //         // }
+        //         // // Lo que esta entre estos comentarios es una prueba            
+
+
+        //     }
+        //     return ans;
+        // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // public static int _GetValue(string value, Dictionary<string, int> stats)
 // {
 //     if (stats.ContainsKey(value))

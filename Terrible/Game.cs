@@ -1,64 +1,83 @@
 using YUGIOH;
 using Compiler;
 using PBT;
-
+using Spectre.Console;
 
 namespace YUGIOH
 {
     public static class Game
     {
-        public static void Start()
+        public static void MainMenu(List<Deck> DECKS)
         {
-            var DECKS = MazeCreator._Recopilatory();//Cogiendo la lista de Decks
+            Console.Clear();
+            string[] options = new[] { "Build Decks", "Exit Game" }; //{ "Start Game", "Build Decks","Exit Game"}
+            if (DECKS.Count > 0)
+                options = new[] { "Start Game", "Build Decks", "Exit Game" };
 
-            System.Console.WriteLine("WELLCOME");
+            switch (PBTout.GamePrompt<string>("", (x => x), options))
+            {
+                case "Start Game":
+                    Start(DECKS);
+                    break;
+                case "Build Decks":
+                    DECKS = MazeCreator._Recopilatory();
+                    MainMenu(DECKS);
+                    break;
+                case "Exit Game":
+                    return;
+                default:
+                    break;
+            }
+
+
+            //var DECKS = MazeCreator._Recopilatory();//Cogiendo la lista de Decks
+        }
+        public static void Start(List<Deck> DECKS)
+        {
+            Console.Clear();
+
+            Player[] players = new Player[2];
+            for (int i = 0; i < players.Length; i++)
+            {
+                Console.Clear();
+                PBTout.PBTPrint($"Player {i + 1}: ", 250, "white");
+                string name = PBTout.AskString("Escriba su nombre: ");
+                PBTout.ActualValues(name);
+                PBTout.PBTPrint("Seleccione su Deck: ", 250, "white");
+                var SelectedDeck = PBTout.GamePrompt<Deck>("Decks: ", (x => x.Deckname), DECKS.ToArray());
+                PBTout.ActualValues(name, SelectedDeck.Deckname);
+                PBTout.PBTPrint("Es un jugador virtual : ", 250, "white");
+                bool virt = PBTout.GamePrompt<bool>("Virtual? ", (x => x.ToString()), new[] { false, true });
+                PBTout.ActualValues(name, SelectedDeck.Deckname, virt.ToString());
+                if (virt)
+                    players[i] = new VirtualPlayer((Deck)SelectedDeck.Clone(), name);
+                else
+                    players[i] = new Player((Deck)SelectedDeck.Clone(), name);
+
+                PBTout.ActualValues(name, SelectedDeck.Deckname, virt.ToString());
+                if (!PBTout.GamePrompt<bool>("All Right? ", (x => x.ToString()), new[] { true, false }))
+                    i--;
+            }
+            Console.Clear();
+
+
+            AnsiConsole.Write(new FigletText(players[0].Name)
+            .LeftAligned()
+            .Color(Color.Red));
+            AnsiConsole.Write(new FigletText("vs")
+            .Centered()
+            .Color(Color.White));
+            AnsiConsole.Write(new FigletText(players[1].Name)
+            .RightAligned()
+            .Color(Color.Blue));
             System.Console.WriteLine();
-            Console.ReadLine();
-            // Dando la Bienvenida
-
-
-            foreach (var deck in DECKS)//Showing Decks to choose
-            {
-
-                deck.ShowDeck();
-            }
-
-            var Deck1 = DECKS[GetSelection(DECKS.Count, "Deck for Player1")];//Getting Deck for Player1
+            AnsiConsole.Write(new Markup("[blue]( PRESS [/][underline red]ANY KEY[/][blue] TO START )[/]").Centered());
+            Console.ReadKey(true);
+            new Board(players[0], players[1]).FirstTurn(players[0], players[1]);
 
 
 
-            foreach (var deck in DECKS)//Showing Decks to choose
-            {
-                deck.ShowDeck();
-            }
 
-            var Deck2 = DECKS[GetSelection(DECKS.Count, "Deck for Player2")];//Getting Deck for Player2
-
-
-
-            if (Deck1 == Deck2)//Caso base en que ambos escogieron el mismo Deck
-            {
-                Deck2 = (Deck)Deck1.Clone();
-            }
-
-
-            bool IsP1Virtual = false;
-            System.Console.WriteLine("Es Player1 un Virtual Player? (Escribe algo si si)");//Se pregunta si es Virtal el Player1
-            if (Console.ReadLine() != null) IsP1Virtual = true;
-
-
-            bool IsP2Virtual = false;
-            System.Console.WriteLine("Es Player2 un Virtual Player? (Escribe algo si si)");//Se pregunta si es Virtal el Player2
-            if (Console.ReadLine() != null) IsP2Virtual = true;
-
-
-            if(IsP1Virtual && IsP2Virtual) new Board(new VirtualPlayer(Deck1), new VirtualPlayer(Deck2)).Play();// Seleccionar si van a ser virtual player o no
-
-            else if(!IsP1Virtual && IsP2Virtual) new Board(new Player(Deck1), new VirtualPlayer(Deck2)).Play();
-
-            else if(IsP1Virtual && !IsP2Virtual) new Board(new VirtualPlayer(Deck1), new Player(Deck2)).Play();
-
-            else if(!IsP1Virtual && !IsP2Virtual) new Board(new Player(Deck1), new Player(Deck2)).Play();
         }
 
 
@@ -75,14 +94,9 @@ namespace YUGIOH
 
             return choice - 1;
         }
-
-
-
         private static bool IsIndexOk(int index, int size)
         {
-            if (index > size || index <= 0)
-                return false;
-            return true;
+            return !(index > size || index <= 0);
         }
 
     }

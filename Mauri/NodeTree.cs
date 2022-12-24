@@ -25,11 +25,11 @@ namespace Compiler
         public Error(string _dialog, int _line)
         {
             dialog = _dialog;
-            line = _line-File.ReadAllLines("./defaultactions/defaultactions.txt").Length;
+            line = _line - File.ReadAllLines("./defaultactions/defaultactions.txt").Length;
         }
         public void _Print()
         {
-            PBTout.PBTPrint($" - error en la linea ({line + 1}) : {dialog}",40,"red");
+            PBTout.PBTPrint($" - error en la linea ({line + 1}) : {dialog}", 40, "red");
         }
     }
     public class BinExp : ExpressionNode
@@ -133,8 +133,9 @@ namespace Compiler
         {
             var list = new List<Dictionary<string, int>>();
 
-            foreach (var item in P1.Deck.Cards)
-                list.Add(item.Stats);
+            foreach (var item in P1.Field)
+                if (!(item == null))
+                    list.Add(item.Stats);
 
             foreach (var item in list)
             {
@@ -157,8 +158,9 @@ namespace Compiler
         public override int Valuate(Dictionary<string, int> stats, Dictionary<string, int> statsadv, Player P1, Player P2)
         {
             var list = new List<Dictionary<string, int>>();
-            foreach (var item in P1.Deck.Cards)
-                list.Add(item.Stats);
+            foreach (var item in P1.Field)
+                if (!(item == null))
+                    list.Add(item.Stats);
 
             foreach (var item in list)
             {
@@ -183,8 +185,9 @@ namespace Compiler
         {
             var list = new List<Dictionary<string, int>>();
 
-            foreach (var item in P2.Deck.Cards)
-                list.Add(item.Stats);
+            foreach (var item in P2.Field)
+                if (!(item == null))
+                    list.Add(item.Stats);
 
             foreach (var item in list)
             {
@@ -208,8 +211,9 @@ namespace Compiler
         {
             var list = new List<Dictionary<string, int>>();
 
-            foreach (var item in P2.Deck.Cards)
-                list.Add(item.Stats);
+           foreach (var item in P2.Field)
+                if (!(item == null))
+                    list.Add(item.Stats);
 
             foreach (var item in list)
             {

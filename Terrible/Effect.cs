@@ -17,15 +17,4 @@ namespace YUGIOH
         }
     }
 
-    
-
-    // class SimpleAttack:Effect
-    // {
-    //     public SimpleAttack()
-    // }
-
-    // class Damage:Effect
-    // {
-
-    // }
 }

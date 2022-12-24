@@ -3,7 +3,7 @@ using YUGIOH;
 namespace Compiler
 {
 
-    public class Accion//:Action
+    public class Accion
     {
 
         public string Name { get; private set; }
@@ -20,7 +20,9 @@ namespace Compiler
         public void DoAct(Card Self, Card Target, Player P1, Player P2)
         {
             foreach (var item in Effects)
+            {
                 item.Run(Self.Stats, Target.Stats, P1, P2);
+            }
         }
     }
 }
