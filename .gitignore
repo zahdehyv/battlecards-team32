@@ -1,2 +1,12 @@
 
 *.cache
+obj/Debug/net6.0/Main.pdb
+*.editorconfig
+*.dll
+*.cache
+*.pdb
+*.dll
+*.pdb
+*.editorconfig
+*.dll
+*.cache
