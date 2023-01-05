@@ -95,7 +95,7 @@ namespace YUGIOH
         public void WriteCard()//Se usa para imprimir la carta en consola
         {
             System.Console.Write("- " + Name + " ");
-            if (!Name.StartsWith("|||carta_error|||"))
+            if (!Name.StartsWith("|X|"))
             {
                 foreach (string item in Stats.Keys)
                     System.Console.Write($"  {item}: {Stats[item]}  ");
