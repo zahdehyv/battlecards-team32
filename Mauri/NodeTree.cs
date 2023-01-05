@@ -1,9 +1,3 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-using YUGIOH;
-using PBT;
-
 namespace Compiler
 {
     public abstract class InstructionNode
@@ -25,11 +19,11 @@ namespace Compiler
         public Error(string _dialog, int _line)
         {
             dialog = _dialog;
-            line = _line - File.ReadAllLines("./default/defaultactions.txt").Length;
+            line = 1+_line - File.ReadAllLines("./default/defaultactions.txt").Length;
         }
         public void _Print()
         {
-            PBTout.PBTPrint($" - error en la linea ({line + 1}) : {dialog}", 40, "red");
+            PBTout.PBTPrint($" - error en la linea ({line}) : {dialog}", 40, "red");
         }
     }
     public class BinExp : ExpressionNode

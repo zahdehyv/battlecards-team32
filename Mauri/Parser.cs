@@ -1,6 +1,3 @@
-using System.Text;
-using System.Collections.Generic;
-
 namespace Compiler
 {
 
@@ -23,7 +20,7 @@ namespace Compiler
             }
             else return (code, true);
         }
-        static (List<string>, int, List<string>) BuildInst(List<string> code, int i, List<Error> errors)
+        static (List<string>, int, List<string>) BuildInst(List<string> code, int i, List<Error> errors, int startline)
         {
             List<string> INST = new List<string>();
             List<string> INSTELSE = new List<string>();
@@ -41,7 +38,7 @@ namespace Compiler
                         continue;
                     }
                     else if (balanceifs < 0)
-                        errors.Add(new Error($"desbalanceados los inicios y finales respecto a la instruccion padre en la linea ({i}) [else de mas]", k));
+                        errors.Add(new Error($"desbalanceados los inicios y finales respecto a la instruccion padre en la linea ({i}) [else de mas]", startline + k));
                 }
                 else if (code[k].StartsWith("if")) balanceifs++;
 
@@ -60,7 +57,7 @@ namespace Compiler
                         break;
                     }
                     else if (balance < 0)
-                        errors.Add(new Error($"desbalanceados los inicios y finales respecto a la instruccion padre en la linea ({i}) [end de mas]", k));
+                        errors.Add(new Error($"desbalanceados los inicios y finales respecto a la instruccion padre en la linea ({i}) [end de mas]", startline + k));
                 }
                 if (elise)
                     INSTELSE.Add(code[k]);
@@ -70,12 +67,12 @@ namespace Compiler
 
             if (balance > 0)
             {
-                errors.Add(new Error("la instruccion iniciada en esta linea llega al final del codigo sin cerrarse", i));
+                errors.Add(new Error("la instruccion iniciada en esta linea llega al final del codigo sin cerrarse", startline + i));
             }
 
             return (INST, i, INSTELSE);
         }
-        public static (List<InstructionNode>, List<Accion>) ParsearInst(List<string> code, Dictionary<string, int> stats, List<Error> errors)
+        public static (List<InstructionNode>, List<Accion>) ParsearInst(List<string> code, Dictionary<string, int> stats, List<Error> errors, int startline)
         {
             List<InstructionNode> _Inst = new List<InstructionNode>();
             List<Accion> _Act = new List<Accion>();
@@ -114,13 +111,13 @@ namespace Compiler
                                     ToSet.Add(a.Item1);
                                     self.Add(a.Item2);
                                 }
-                                else errors.Add(new Error($"no se puede asignar a {a.Item1} pues no existe en el contexto", i));
+                                else errors.Add(new Error($"no se puede asignar a {a.Item1} pues no existe en el contexto", startline + i));
 
                             }
                         }
                         if (toexp)
                             _Inst.Add(new SetInstruction(ToSet, ParsearExps(expA, stats, errors, i), self));
-                        else errors.Add(new Error($"no encontrado valor de asignacion en {code[i]}", i));
+                        else errors.Add(new Error($"no encontrado valor de asignacion en {code[i]}", startline + i));
                         break;
                     case "if":
                         expA = "";
@@ -129,21 +126,23 @@ namespace Compiler
                         {
                             expA += decode[j];
                         }
-                        var BuiltInst = BuildInst(code, i, errors);
+                        var BuiltInst = BuildInst(code, i, errors,startline);
+                        int tempstart = i+2;
                         i = BuiltInst.Item2;
-                        var instrucciones = ParsearInst(BuiltInst.Item1, stats, errors);
+                        var instrucciones = ParsearInst(BuiltInst.Item1, stats, errors, tempstart);
                         _Act.AddRange(instrucciones.Item2);
-                        _Inst.Add(new IfInstruction(ParsearExps(expA, stats, errors, i), ParsearInst(BuiltInst.Item1, stats, errors).Item1, ParsearInst(BuiltInst.Item3, stats, errors).Item1));
+                        _Inst.Add(new IfInstruction(ParsearExps(expA, stats, errors, i), instrucciones.Item1, ParsearInst(BuiltInst.Item3, stats, errors, tempstart).Item1));
                         break;
                     case "while":
                         expA = "";
                         for (int j = 1; j < decode.Length; j++)
                             expA += decode[j];
-                        BuiltInst = BuildInst(code, i, errors);
+                        BuiltInst = BuildInst(code, i, errors,startline);
+                        tempstart = i+2;
                         i = BuiltInst.Item2;
-                        instrucciones = ParsearInst(BuiltInst.Item1, stats, errors);
+                        instrucciones = ParsearInst(BuiltInst.Item1, stats, errors, tempstart);
                         _Act.AddRange(instrucciones.Item2);
-                        _Inst.Add(new WhileInstruction(ParsearExps(expA, stats, errors, i), ParsearInst(BuiltInst.Item1, stats, errors).Item1));
+                        _Inst.Add(new WhileInstruction(ParsearExps(expA, stats, errors, i), instrucciones.Item1));
                         break;
                     case "for":
                         expA = "";
@@ -162,12 +161,13 @@ namespace Compiler
                                 expA += decode[j];
                         }
 
-                        BuiltInst = BuildInst(code, i, errors);
+                        BuiltInst = BuildInst(code, i, errors,startline);
+                        tempstart = i+2;
                         i = BuiltInst.Item2;
-                        instrucciones = ParsearInst(BuiltInst.Item1, stats, errors);
+                        instrucciones = ParsearInst(BuiltInst.Item1, stats, errors, tempstart);
                         _Act.AddRange(instrucciones.Item2);
                         _Inst.Add(new ForInstruction(ParsearExps(expA, stats, errors, i), ParsearExps(expB, stats, errors, i), instrucciones.Item1));
-                        
+
                         break;
                     case "def":
                         int toselect = 0;
@@ -178,14 +178,16 @@ namespace Compiler
                         string desc = "";
                         for (int p = 3; p < decode.Length; p++)
                             desc += $"{decode[p]} ";
-                        BuiltInst = BuildInst(code, i, errors);
+                        BuiltInst = BuildInst(code, i, errors,startline);
+                        tempstart = i+2;
                         i = BuiltInst.Item2;
-                        _Act.Add(new Accion(decode[1], toselect, ParsearInst(BuiltInst.Item1, stats, errors).Item1, desc));
+                        instrucciones = ParsearInst(BuiltInst.Item1, stats, errors, tempstart);
+                        _Act.Add(new Accion(decode[1], toselect, instrucciones.Item1, desc));
                         break;
                     case " ":
                         continue;
                     default:
-                        errors.Add(new Error($"no reconocida la instruccion {code[i]}", i));
+                        errors.Add(new Error($"no reconocida la instruccion {code[i]}", startline + i));
                         //throw new Exception($"no reconocida la instruccion {code[i]}");
                         break;
                 }
@@ -305,21 +307,33 @@ namespace Compiler
                             if (A == "")
                             {
                                 A = "1";
-                                errors.Add(new Error($"se esperaba algo a la izquierda de {code[i]}", line));
+                                errors.Add(new Error($"se esperaba algo a la izquierda de {code[i]}",line));
                             }
                             if (B == "")
                             {
                                 B = "1";
-                                errors.Add(new Error($"se esperaba algo a la derecha de {code[i]}", line));
+                                errors.Add(new Error($"se esperaba algo a la derecha de {code[i]}",line));
                             }
                             return new BinExp(ParsearExps(A, stats, errors, line), ParsearExps(B, stats, errors, line), code[i].ToString());
                         }
                     }
                 }
             }
-            errors.Add(new Error($"no se reconoce la expresion {code}", line));
+            errors.Add(new Error($"no se reconoce la expresion {code}",line));
             return new NumberExp("1");
         }
     }
 
+
+    public static class PARSER
+    {
+        static (List<InstructionNode>, List<Accion>) Statements(List<string> code, Dictionary<string, int> stats, List<Error> errors)
+        {
+            for (int i = 0; i < code.Count; i++)
+            {
+
+            }
+            throw new Exception();
+        }
+    }
 }

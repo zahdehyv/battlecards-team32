@@ -1,9 +1,4 @@
-﻿using Compiler;
-using YUGIOH;
-using PBT;
-using Spectre.Console;
-
-Console.Clear();
+﻿Console.Clear();
 Console.WriteLine();
 AnsiConsole.Write(new FigletText("WELLCUM")
 .Centered()
@@ -16,3 +11,5 @@ AnsiConsole.Write(new Markup("[blue]...press [/][underline red]any key[/][blue] 
 Console.ReadKey(true);
 
 Game.MainMenu();
+
+//var deccc=MazeCreator._Recopilatory();

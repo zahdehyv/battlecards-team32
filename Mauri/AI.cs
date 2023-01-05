@@ -1,7 +1,3 @@
-using YUGIOH;
-using PBT;
-using Compiler;
-
 namespace AI
 {
     class Trainer
