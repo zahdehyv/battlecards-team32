@@ -1,13 +1,22 @@
 using YUGIOH;
 using Compiler;
 using PBT;
+using AI;
 using Spectre.Console;
 
 namespace YUGIOH
 {
     public static class Game
     {
-        public static void MainMenu(List<Deck> DECKS)
+        static List<Deck> DECKS = new List<Deck>();
+        static string[] textW = File.ReadAllLines("./default/weights.txt");
+        static (double, double)[] weights = new (double, double)[]{
+                    (Convert.ToDouble(textW[0].Split()[0]),Convert.ToDouble(textW[0].Split()[1])),
+                    (Convert.ToDouble(textW[1].Split()[0]),Convert.ToDouble(textW[1].Split()[1])),
+                    (Convert.ToDouble(textW[2].Split()[0]),Convert.ToDouble(textW[2].Split()[1])),
+                    (Convert.ToDouble(textW[3].Split()[0]),Convert.ToDouble(textW[3].Split()[1]))
+                };
+        public static void MainMenu()
         {
             Console.Clear();
             string[] options = new[] { "Build Decks", "Exit Game" }; //{ "Start Game", "Build Decks","Exit Game"}
@@ -17,11 +26,21 @@ namespace YUGIOH
             switch (PBTout.GamePrompt<string>("", (x => x), options))
             {
                 case "Start Game":
-                    Start(DECKS);
+                    Start();
+                    break;
+                case "Training Room":
+                    var tempw = StartTraining();
+                    weights = new (double, double)[]{
+                    (tempw[7],tempw[6]),
+                    (tempw[5],tempw[4]),
+                    (tempw[3],tempw[2]),
+                    (tempw[1],tempw[0])
+                };
+                    MainMenu();
                     break;
                 case "Build Decks":
                     DECKS = MazeCreator._Recopilatory();
-                    MainMenu(DECKS);
+                    MainMenu();
                     break;
                 case "Exit Game":
                     return;
@@ -32,7 +51,7 @@ namespace YUGIOH
 
             //var DECKS = MazeCreator._Recopilatory();//Cogiendo la lista de Decks
         }
-        public static void Start(List<Deck> DECKS)
+        public static void Start()
         {
             Console.Clear();
 
@@ -50,7 +69,7 @@ namespace YUGIOH
                 bool virt = PBTout.GamePrompt<bool>("Virtual? ", (x => x.ToString()), new[] { false, true });
                 PBTout.ActualValues(name, SelectedDeck.Deckname, virt.ToString());
                 if (virt)
-                    players[i] = new VirtualPlayer((Deck)SelectedDeck.Clone(), name);
+                    players[i] = new VirtualPlayer((Deck)SelectedDeck.Clone(), name, weights);
                 else
                     players[i] = new Player((Deck)SelectedDeck.Clone(), name);
 
@@ -74,10 +93,20 @@ namespace YUGIOH
             AnsiConsole.Write(new Markup("[blue]( PRESS [/][underline red]ANY KEY[/][blue] TO START )[/]").Centered());
             Console.ReadKey(true);
             new Board(players[0], players[1]).FirstTurn(players[0], players[1]);
-
-
-
-
+        }
+        public static double[] StartTraining()
+        {
+            Console.Clear();
+            Deck[] decks = new Deck[2];
+            for (int i = 0; i < 2; i++)
+            {
+                decks[i] = PBTout.GamePrompt<Deck>($"Seleccione deck de entrenamiento {i}", (x => x.Deckname), DECKS.ToArray());
+            }
+            int iter = Convert.ToInt32(PBTout.AskString("Introduzca el numero de iteraciones: "));
+            int turns = Convert.ToInt32(PBTout.AskString("Introduzca el numero maximo de turnos: "));
+            var trainer = new Trainer(decks[0], decks[1], iter, turns);
+            var result = trainer.Train();
+            return result;
         }
 
 

@@ -25,7 +25,7 @@ namespace Compiler
         public Error(string _dialog, int _line)
         {
             dialog = _dialog;
-            line = _line - File.ReadAllLines("./defaultactions/defaultactions.txt").Length;
+            line = _line - File.ReadAllLines("./default/defaultactions.txt").Length;
         }
         public void _Print()
         {

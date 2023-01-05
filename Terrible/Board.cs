@@ -50,7 +50,7 @@ namespace YUGIOH
             .Centered()
             .Color(Color.Green));
                 Console.ReadKey(true);
-                Game.MainMenu(new List<Deck>());
+                Game.MainMenu();
             }
             AnsiConsole.Write(new FigletText(current.PLAY(adversary, this))
         .Centered()
@@ -59,7 +59,15 @@ namespace YUGIOH
             .Centered()
             .Color(Color.Green));
             Console.ReadKey(true);
-            Game.MainMenu(new List<Deck>());
+            Game.MainMenu();
+        }
+        public int FirstTurnTraining(VirtualPlayer current, VirtualPlayer adversary, int Maxturn)
+        {
+            //Invvocacion inicial
+            current.PlayCardT(adversary);
+            adversary.PlayCardT(current);
+            UpdateBoard();
+            return current.TRAIN(adversary, this, 0, Maxturn);
         }
 
         public string GetWinner()

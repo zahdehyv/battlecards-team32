@@ -6,8 +6,60 @@ namespace YUGIOH
 {
     public class VirtualPlayer : Player
     {
-        public VirtualPlayer(Deck aDeck, string _name) : base(aDeck, _name) { }
+        public (double, double)[] weights;
+        public VirtualPlayer(Deck aDeck, string _name, (double, double)[] _weights) : base(aDeck, _name)
+        {
+            weights = _weights;
+        }
 
+        public VirtualPlayer(Deck aDeck, string _name, (double, double) L, (double, double) A, (double, double) D, (double, double) S) : base(aDeck, _name)
+        {
+            var textW = File.ReadAllLines("./default/weights.txt");
+            weights = new (double, double)[] { L, A, D, S };
+        }
+
+
+        public int TRAIN(VirtualPlayer adversary, Board board, int TURNOX, int Maxturn)
+        {
+            if (TURNOX > Maxturn)
+            {
+                //System.Console.WriteLine(TURNOX);
+                return TURNOX;
+            }
+
+            board.UpdateBoard();
+            PlayCardT(adversary);
+            var actions = GetActions(adversary, board);
+
+            for (int i = 0; i < Field.Length; i++)
+            {
+                if (Field[i] == null) continue;
+                Card ATTACKER = Field[i];
+                Accion ACCION = ATTACKER.Actions[actions[i].Index];
+                Player PLAYERATTACKED = board.GetPlayerFromInt(actions[i].Player);
+                Card ATTACKED = PLAYERATTACKED.Field[actions[i].FieldIndex];
+
+                if (ATTACKER != null && ATTACKED != null)
+                {
+                    ACCION.DoAct(ATTACKER, ATTACKED, this, adversary);
+                    board.UpdateBoard();
+                    if (board.End())
+                    {
+                        //System.Console.WriteLine(TURNOX);
+                        return TURNOX;
+                    }
+                }
+            }
+            return adversary.TRAIN(this, board, TURNOX + 1, Maxturn);
+        }
+
+        public void PlayCardT(Player adversary)
+        {
+            if (IsDeckEmpty() || IsFieldFull()) { return; }
+            var card = GetMoreValuableCard(Deck.Cards);
+            PlayCardFromDeck(card, GetFreeSpace());
+            PlayCardT(adversary);
+        }
         public AccionIndex[] GetActions(Player oP, Board board)
         {
             int oPint = board.GetIntFromPlayer(oP);
@@ -58,7 +110,8 @@ namespace YUGIOH
 
             if (CurrentPlayer.Field[CurrentCardIndex] != null)
             {
-                var BestOutcome = Calc.MeanValues(5, 1, 1, 0, CurrentPlayer, board.GetOppossingPlayer(CurrentPlayer));
+
+                var BestOutcome = Calc.MeanValues(weights[0], weights[1], weights[2], weights[3], CurrentPlayer, board.GetOppossingPlayer(CurrentPlayer));
 
                 int CurrentPlayerInt = board.GetIntFromPlayer(CurrentPlayer);
                 int OpposingPlayerInt = board.GetIntFromPlayer(board.GetOppossingPlayer(CurrentPlayer));
@@ -80,7 +133,7 @@ namespace YUGIOH
                             {
                                 var SimCurrentPlayer = Simulation.GetPlayerFromInt(CurrentPlayerInt);
                                 SimCurrentPlayer.Field[CurrentCardIndex].ExecuteAction(j, i, Simulation.P1, OpposingPlayerInt, CurrentPlayerInt, Simulation);
-                                var CurrentValue = Calc.MeanValues(5, 1, 1, 0, SimCurrentPlayer, Simulation.GetOppossingPlayer(SimCurrentPlayer));
+                                var CurrentValue = Calc.MeanValues(weights[0], weights[1], weights[2], weights[3], SimCurrentPlayer, Simulation.GetOppossingPlayer(SimCurrentPlayer));
                                 if (CurrentValue > BestOutcome)
                                 {
                                     BestOutcome = CurrentValue;
@@ -97,7 +150,7 @@ namespace YUGIOH
                             {
                                 var SimCurrentPlayer = Simulation.GetPlayerFromInt(CurrentPlayerInt);
                                 SimCurrentPlayer.Field[CurrentCardIndex].ExecuteAction(j, i - (int)dim0 / 2, Simulation.P2, OpposingPlayerInt, CurrentPlayerInt, Simulation);
-                                var CurrentValue = Calc.MeanValues(5, 1, 1, 0, SimCurrentPlayer, Simulation.GetOppossingPlayer(SimCurrentPlayer));
+                                var CurrentValue = Calc.MeanValues(weights[0], weights[1], weights[2], weights[3], SimCurrentPlayer, Simulation.GetOppossingPlayer(SimCurrentPlayer));
                                 if (CurrentValue > BestOutcome)
                                 {
                                     BestOutcome = CurrentValue;

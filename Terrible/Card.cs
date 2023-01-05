@@ -58,7 +58,8 @@ namespace YUGIOH
 
         public void ExecuteAction(int AIndex, int Target, Player Oppossing, Player Current)
         {
-            Actions[AIndex].DoAct(this, Oppossing.Field[Target], Oppossing, Current);
+            if (this != null && Oppossing.Field[Target]!=null)
+                Actions[AIndex].DoAct(this, Oppossing.Field[Target], Oppossing, Current);
         }
 
 
@@ -66,7 +67,8 @@ namespace YUGIOH
         {
             if (AIndex >= 0)
             {
-                Actions[AIndex].DoAct(this, TargetPlayer.Field[Target], board.GetPlayerFromInt(CurrentPlayer), board.GetPlayerFromInt(OppossingPlayer));
+                if (this != null && TargetPlayer.Field[Target] != null)
+                    Actions[AIndex].DoAct(this, TargetPlayer.Field[Target], board.GetPlayerFromInt(CurrentPlayer), board.GetPlayerFromInt(OppossingPlayer));
             }
         }
 

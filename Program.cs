@@ -15,4 +15,4 @@ System.Console.WriteLine();
 AnsiConsole.Write(new Markup("[blue]...press [/][underline red]any key[/][blue] to continue...[/]").Centered());
 Console.ReadKey(true);
 
-Game.MainMenu(new List<Deck>());
+Game.MainMenu();

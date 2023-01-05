@@ -10,7 +10,7 @@ namespace Compiler
     static class MazeCreator
     {
         static string DeckDir = "./decks";
-        static string DefActions = "./defaultactions/defaultactions.txt";
+        static string DefActions = "./default/defaultactions.txt";
 
         public static List<Deck> _Recopilatory()
         {//Dictionary<string,Deck> decks=new Dictionary<string, Deck>();

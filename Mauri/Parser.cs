@@ -131,6 +131,8 @@ namespace Compiler
                         }
                         var BuiltInst = BuildInst(code, i, errors);
                         i = BuiltInst.Item2;
+                        var instrucciones = ParsearInst(BuiltInst.Item1, stats, errors);
+                        _Act.AddRange(instrucciones.Item2);
                         _Inst.Add(new IfInstruction(ParsearExps(expA, stats, errors, i), ParsearInst(BuiltInst.Item1, stats, errors).Item1, ParsearInst(BuiltInst.Item3, stats, errors).Item1));
                         break;
                     case "while":
@@ -139,6 +141,8 @@ namespace Compiler
                             expA += decode[j];
                         BuiltInst = BuildInst(code, i, errors);
                         i = BuiltInst.Item2;
+                        instrucciones = ParsearInst(BuiltInst.Item1, stats, errors);
+                        _Act.AddRange(instrucciones.Item2);
                         _Inst.Add(new WhileInstruction(ParsearExps(expA, stats, errors, i), ParsearInst(BuiltInst.Item1, stats, errors).Item1));
                         break;
                     case "for":
@@ -160,7 +164,10 @@ namespace Compiler
 
                         BuiltInst = BuildInst(code, i, errors);
                         i = BuiltInst.Item2;
-                        _Inst.Add(new ForInstruction(ParsearExps(expA, stats, errors, i), ParsearExps(expB, stats, errors, i), ParsearInst(BuiltInst.Item1, stats, errors).Item1));
+                        instrucciones = ParsearInst(BuiltInst.Item1, stats, errors);
+                        _Act.AddRange(instrucciones.Item2);
+                        _Inst.Add(new ForInstruction(ParsearExps(expA, stats, errors, i), ParsearExps(expB, stats, errors, i), instrucciones.Item1));
+                        
                         break;
                     case "def":
                         int toselect = 0;
@@ -173,8 +180,10 @@ namespace Compiler
                             desc += $"{decode[p]} ";
                         BuiltInst = BuildInst(code, i, errors);
                         i = BuiltInst.Item2;
-                        _Act.Add(new Accion(decode[1], toselect, ParsearInst(BuiltInst.Item1, stats, errors).Item1,desc));
+                        _Act.Add(new Accion(decode[1], toselect, ParsearInst(BuiltInst.Item1, stats, errors).Item1, desc));
                         break;
+                    case " ":
+                        continue;
                     default:
                         errors.Add(new Error($"no reconocida la instruccion {code[i]}", i));
                         //throw new Exception($"no reconocida la instruccion {code[i]}");

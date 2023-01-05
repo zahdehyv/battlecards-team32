@@ -1,25 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Actividades_Docentes\\Prog\\GitHub\\battlecards-team32\\Main.csproj": {}
+    "D:\\Proyectos\\GITHUB\\battlecards-team32\\Main.csproj": {}
   },
   "projects": {
-    "E:\\Actividades_Docentes\\Prog\\GitHub\\battlecards-team32\\Main.csproj": {
+    "D:\\Proyectos\\GITHUB\\battlecards-team32\\Main.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Actividades_Docentes\\Prog\\GitHub\\battlecards-team32\\Main.csproj",
+        "projectUniqueName": "D:\\Proyectos\\GITHUB\\battlecards-team32\\Main.csproj",
         "projectName": "Main",
-        "projectPath": "E:\\Actividades_Docentes\\Prog\\GitHub\\battlecards-team32\\Main.csproj",
-        "packagesPath": "C:\\Users\\Chihe\\.nuget\\packages\\",
-        "outputPath": "E:\\Actividades_Docentes\\Prog\\GitHub\\battlecards-team32\\obj\\",
+        "projectPath": "D:\\Proyectos\\GITHUB\\battlecards-team32\\Main.csproj",
+        "packagesPath": "C:\\Users\\MauriKY\\.nuget\\packages\\",
+        "outputPath": "D:\\Proyectos\\GITHUB\\battlecards-team32\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\ProgramData\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Chihe\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\MauriKY\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -58,7 +65,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }
