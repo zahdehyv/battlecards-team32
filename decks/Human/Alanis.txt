@@ -5,4 +5,5 @@ set Attack to 7
 
 def Actuar 1
 start
+set Life to adv.Life
 end
