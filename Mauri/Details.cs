@@ -65,13 +65,13 @@ namespace PBT
                         gridup.AddRow(panels.ToArray());
 
                         TableColumn wide = new TableColumn(gridup);
-                        wide.Width = 23;
+                        wide.Width = 21;
                         carta.AddColumn(wide);
                     }
                     else
                     {
                         TableColumn wide = new TableColumn(new Panel("ERROR"));
-                        wide.Width = 23;
+                        wide.Width = 21;
                         carta.AddColumn(wide);
                     }
 
@@ -80,18 +80,19 @@ namespace PBT
                     //   carta.AddRow($"{card.Stats["Defense"]}:shield:");
                     // carta.AddRow(new Markup($"{card.Stats["Attack"]}:dagger: {card.Stats["Defense"]}:shield:"));
                     int pos = 0;
-                    Panel[] statist = new Panel[2];
-                    statist[0] = new Panel("---");
-                    statist[1] = new Panel("---");
+                    string[] statist = new string[3];
+                    statist[0] = "---";
+                    statist[1] = "---";
+                    statist[2] = "---";
                     var griid = new Grid();
+                    griid.AddColumn();
                     griid.AddColumn();
                     griid.AddColumn();
                     foreach (var item in card.Stats.Keys)
                     {
                         if (item != "Life")
                         {
-                            var currstt = new Panel($"{item[0]}{item[1]}:{card.Stats[item]}");
-                            currstt.RoundedBorder();
+                            var currstt = $"{item[0]}{item[1]}{item[2]}:{card.Stats[item]}";
                             switch (pos)
                             {
                                 case 0:
@@ -99,14 +100,24 @@ namespace PBT
                                     pos++;
                                     if (item == card.Stats.Keys.ToArray()[card.Stats.Keys.ToArray().Length - 1])
                                     {
-                                        statist[1] = new Panel("---");
-                                        griid.AddRow((Panel[])statist.Clone());
+                                        statist[1] = "---";
+                                        statist[2] = "---";
+                                        griid.AddRow((string[])statist.Clone());
                                     }
                                     break;
                                 case 1:
                                     statist[1] = currstt;
-                                    griid.AddRow((Panel[])statist.Clone());
-                                    pos--;
+                                    pos++;
+                                    if (item == card.Stats.Keys.ToArray()[card.Stats.Keys.ToArray().Length - 1])
+                                    {
+                                        statist[2] = "---";
+                                        griid.AddRow((string[])statist.Clone());
+                                    }
+                                    break;
+                                case 2:
+                                    statist[2] = currstt;
+                                    griid.AddRow((string[])statist.Clone());
+                                    pos=0;
                                     break;
                                 default:
                                     break;
