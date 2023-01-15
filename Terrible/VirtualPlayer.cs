@@ -52,7 +52,7 @@ namespace YUGIOH
         public void PlayCardT(Player adversary)
         {
             if (IsDeckEmpty() || IsFieldFull()) { return; }
-            var card = GetMoreValuableCard(Deck.Cards);
+            var card = GetLessValuableCard(Deck.Cards);
             PlayCardFromDeck(card, GetFreeSpace());
             PlayCardT(adversary);
         }
@@ -72,7 +72,7 @@ namespace YUGIOH
             {
                 NotSortedList.Add(i);
             }
-            SortCardsBy("Speed", SortedList, NotSortedList);
+            SortCardsBy("Attack", SortedList, NotSortedList);
 
             foreach (int i in SortedList)
             {
@@ -231,6 +231,13 @@ namespace YUGIOH
                     }
                 }
             }
+            foreach (var item in this.Field)
+            {
+                if (item == null) continue;
+                item.AddingsDo(this, adversary);
+            }
+            board.UpdateBoard();
+            PBTout.PrintField(adversary, this);
             System.Console.WriteLine();
             System.Console.WriteLine();
             AnsiConsole.Markup($"[red]TERMINAR TURNO de {Name}[/]");
@@ -244,7 +251,7 @@ namespace YUGIOH
             if (IsDeckEmpty() || IsFieldFull()) { return; }
             PBTout.ShowSummonable(Deck);
 
-            var card = GetMoreValuableCard(Deck.Cards);
+            var card = GetLessValuableCard(Deck.Cards);
 
             PlayCardFromDeck(card, GetFreeSpace());
             PBTout.PBTPrint($"{Name} ha invocado a {card.Name}", 200, "white");
@@ -275,6 +282,40 @@ namespace YUGIOH
                 {
                     var val = a[i].GetCardValue();
                     if (val > ansVal)
+                    {
+                        ans = i;
+                        ansVal = val;
+                    }
+                }
+            }
+
+            if (ans == -1) System.Console.WriteLine("El array esta vacio en GetMore ValuableCard retorno -1");
+            return a[ans];
+
+
+        }
+        public Card GetLessValuableCard(List<Card> a)
+        {
+            int ans = -1;
+
+            for (int i = 0; i < a.Count(); i++)
+            {
+                if (a[i] != null)
+                {
+                    ans = i;
+                    break;
+                }
+
+            }
+
+            int ansVal = a[ans].GetCardValue();
+
+            for (int i = ans; i < a.Count(); i++)
+            {
+                if (a[i] != null)
+                {
+                    var val = a[i].GetCardValue();
+                    if (val < ansVal)
                     {
                         ans = i;
                         ansVal = val;

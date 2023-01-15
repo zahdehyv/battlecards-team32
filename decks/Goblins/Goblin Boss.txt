@@ -2,3 +2,12 @@ set Life to 20
 set Speed to 10
 set Defense to 11
 set Attack to 13
+
+def PoisonSlash 1
+start
+set adv.Life to adv.Life-17
+add Poison 2
+start
+set adv.Life to adv.Life-7
+end
+end

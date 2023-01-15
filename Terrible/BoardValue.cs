@@ -14,13 +14,9 @@ namespace YUGIOH
                 if (ccard == null)
                     continue;
 
-                int index = 0;
-                foreach (var item in ccard.Stats.Values)
-                {
-                    if (item > 0)
-                        CurrentStats[index] += item;
-                    index++;
-                }
+                for (int i = 0; i < 3; i++)
+                    CurrentStats[i] += ccard.Stats.Values.ToArray()[i];
+
             }
 
             double[] AdversaryStats = new double[4];
@@ -31,21 +27,15 @@ namespace YUGIOH
                 if (acard == null)
                     continue;
 
-                int Index = 0;
-
-                foreach (var item in acard.Stats.Values)
-                {
-                    if (item > 0)
-                        AdversaryStats[Index] += item;
-                    Index++;
-                }
+                for (int i = 0; i < 3; i++)
+                    AdversaryStats[i] += acard.Stats.Values.ToArray()[i];
             }
             double LifeValue = (LW.Item1 * CurrentStats[0] - LW.Item2 * AdversaryStats[0]);
             double AttackValue = (AW.Item1 * CurrentStats[1] - AW.Item2 * AdversaryStats[1]);
             double DefenseValue = (DW.Item1 * CurrentStats[2] - DW.Item2 * AdversaryStats[2]);
-            double SpeedValue = (SW.Item1 * CurrentStats[3] - SW.Item2 * AdversaryStats[3]);
-            var val = LifeValue + AttackValue + DefenseValue + SpeedValue;
-            return LifeValue + AttackValue + DefenseValue + SpeedValue;
+            //double SpeedValue = (SW.Item1 * CurrentStats[3] - SW.Item2 * AdversaryStats[3]);
+            var val = LifeValue + AttackValue + DefenseValue; // + SpeedValue;
+            return val;
         }
     }
 }

@@ -2,7 +2,7 @@ namespace Compiler
 {
     public abstract class InstructionNode
     {
-        public abstract void Run(Dictionary<string, int> stats, Dictionary<string, int> statsadv, Player P1, Player P2);
+        public abstract void Run(Card mine, Card adv, Player P1, Player P2);
     }
     public abstract class ExpressionNode
     {
@@ -19,7 +19,7 @@ namespace Compiler
         public Error(string _dialog, int _line)
         {
             dialog = _dialog;
-            line = 1+_line - File.ReadAllLines("./default/defaultactions.txt").Length;
+            line = 1 + _line - File.ReadAllLines("./default/defaultactions.txt").Length;
         }
         public void _Print()
         {
@@ -93,26 +93,14 @@ namespace Compiler
             {
                 if (stats.ContainsKey(name))
                     return stats[name];
-                else throw new Exception($"no existe la variable {name}");
+                else return -1;
             }
             else
             {
                 if (statsadv.ContainsKey(name))
                     return statsadv[name];
-                else throw new Exception($"no existe la variable {name}");
+                else return -1;
             };
-        }
-        int Mean(List<Card> Target)
-        {
-            int a = 0;
-            foreach (var item in Target)
-            {
-                if (item.Stats.ContainsKey(name))
-                    a += item.Stats[name];
-                else throw new Exception($"no existe la variable {name}");
-            }
-            a = a / Target.Count;
-            return a;
         }
     }
     public class AllSelfExp : ExpressionNode
@@ -205,7 +193,7 @@ namespace Compiler
         {
             var list = new List<Dictionary<string, int>>();
 
-           foreach (var item in P2.Field)
+            foreach (var item in P2.Field)
                 if (!(item == null))
                     list.Add(item.Stats);
 
@@ -232,26 +220,47 @@ namespace Compiler
             A = _A;
             self = _self;
         }
-        public override void Run(Dictionary<string, int> stats, Dictionary<string, int> statsadv, Player P1, Player P2)
+        public override void Run(Card mine, Card adv, Player P1, Player P2)
         {
-            int a = A.Valuate(stats, statsadv, P1, P2);
+            int a = A.Valuate(mine.Stats, adv.Stats, P1, P2);
 
             for (int i = 0; i < ToSet.Count; i++)
             {
                 if (self[i])
                 {
-                    if (stats.ContainsKey(ToSet[i]))
-                        stats[ToSet[i]] = a;
+                    if (mine.Stats.ContainsKey(ToSet[i]))
+                        mine.Stats[ToSet[i]] = a;
                     else throw new Exception($"no se puede asignar {a} a {ToSet[i]} pq no existe en el contexto");
                 }
 
                 else
                 {
-                    if (statsadv.ContainsKey(ToSet[i]))
-                        statsadv[ToSet[i]] = a;
+                    if (adv.Stats.ContainsKey(ToSet[i]))
+                        adv.Stats[ToSet[i]] = a;
                     else throw new Exception($"no se puede asignar {a} a {ToSet[i]} pq no existe en el contexto");
                 }
             }
+        }
+    }
+
+    public class AddInstruction : InstructionNode
+    {
+        Accion A;
+        public AddInstruction(Accion _A)
+        {
+            A = _A;
+        }
+        public override void Run(Card mine, Card adv, Player P1, Player P2)
+        {
+            for (int i = 0; i < adv.Addings.Count; i++)
+            {
+                if (adv.Addings[i].Name == A.Name)
+                {
+                    adv.Addings[i].MCount(A.count);
+                    return;
+                }
+            }
+            adv.Addings.Add(A.NEW());
         }
     }
     public class IfInstruction : InstructionNode
@@ -267,19 +276,19 @@ namespace Compiler
             Else = _Else;
         }
 
-        public override void Run(Dictionary<string, int> stats, Dictionary<string, int> statsadv, Player P1, Player P2)
+        public override void Run(Card mine, Card adv, Player P1, Player P2)
         {
 
-            var thiscase = A.Valuate(stats, statsadv, P1, P2);
+            var thiscase = A.Valuate(mine.Stats, adv.Stats, P1, P2);
             if (thiscase >= 0)
             {
                 foreach (var item in If)
-                    item.Run(stats, statsadv, P1, P2);
+                    item.Run(mine, adv, P1, P2);
             }
             else
             {
                 foreach (var item in Else)
-                    item.Run(stats, statsadv, P1, P2);
+                    item.Run(mine, adv, P1, P2);
             }
 
         }
@@ -290,7 +299,8 @@ namespace Compiler
         ExpressionNode A;
         ExpressionNode B;
         List<InstructionNode> I;
-
+        int whileLimit = 1000;
+        int whileCount = 0;
         public WhileInstruction(ExpressionNode _A, List<InstructionNode> _I)
         {
             A = _A;
@@ -298,13 +308,20 @@ namespace Compiler
             I = _I;
         }
 
-        public override void Run(Dictionary<string, int> stats, Dictionary<string, int> statsadv, Player P1, Player P2)
+        public override void Run(Card mine, Card adv, Player P1, Player P2)
         {
-            if (A.Valuate(stats, statsadv, P1, P2) >= 0)
+            whileCount++;
+            if (whileCount > whileLimit)
+            {
+                whileCount = 0;
+                //System.Console.WriteLine("Se llego al top del while");
+                return;
+            }
+            if (A.Valuate(mine.Stats, adv.Stats, P1, P2) >= 0)
             {
                 foreach (var item in I)
-                    item.Run(stats, statsadv, P1, P2);
-                Run(stats, statsadv, P1, P2);
+                    item.Run(mine, adv, P1, P2);
+                Run(mine, adv, P1, P2);
             }
         }
     }
@@ -321,14 +338,14 @@ namespace Compiler
             I = _I;
         }
 
-        public override void Run(Dictionary<string, int> stats, Dictionary<string, int> statsadv, Player P1, Player P2)
+        public override void Run(Card mine, Card adv, Player P1, Player P2)
         {
-            int a = A.Valuate(stats, statsadv, P1, P2);
-            int b = B.Valuate(stats, statsadv, P1, P2);
+            int a = A.Valuate(mine.Stats, adv.Stats, P1, P2);
+            int b = B.Valuate(mine.Stats, adv.Stats, P1, P2);
             for (int i = Math.Min(a, b); i <= Math.Max(a, b); i++)
             {
                 foreach (var item in I)
-                    item.Run(stats, statsadv, P1, P2);
+                    item.Run(mine, adv, P1, P2);
             }
         }
     }

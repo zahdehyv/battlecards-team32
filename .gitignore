@@ -10,3 +10,4 @@ obj/Debug/net6.0/Main.pdb
 *.editorconfig
 *.dll
 *.cache
+*.json

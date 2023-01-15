@@ -2,3 +2,4 @@ set Life to 19
 set Speed to 17
 set Defense to 17
 set Attack to 25
+set Magic to 10

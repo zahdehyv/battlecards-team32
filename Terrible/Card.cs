@@ -7,20 +7,37 @@ namespace YUGIOH
         public string Name;
         public Dictionary<string, int> Stats;
         public List<Accion> Actions;
-
+        public List<Accion> Addings = new List<Accion>();
         public int MaxLife;
 
-
+        public void AddingsDo(Player P1, Player P2)
+        {
+            for (int i = 0; i < Addings.Count; i++)
+                if (Addings[i].count > 0)
+                {
+                    Addings[i].DoAct(this, this, P1, P2);
+                    PBTout.PBTPrint($"Sobre {this.Name} ha actuado {Addings[i].Name}", 200, "white");
+                    Console.ReadKey(true);
+                    if (Addings[i].count < 1000)
+                        Addings[i].MCount(-1);
+                }
+            for (int i = 0; i < Addings.Count; i++)
+                if (Addings[i].count <= 0)
+                {
+                    Addings.RemoveAt(i);
+                    i--;
+                }
+        }
         public Card(string aName, int aLife, int aAttack, int aDefense, int aSpeed, List<Accion> actions)//Constructor con parametros
         {
             Name = aName;
             Stats = new Dictionary<string, int>
-            {
-                {"Life",aLife},
-                {"Attack",aAttack},
-                {"Defense",aDefense},
-                {"Speed",aSpeed}
-            };
+         {
+          {"Life",aLife},
+          {"Attack",aAttack},
+          {"Defense",aDefense},
+          {"Speed",aSpeed}
+         };
             Actions = actions;
         }
 
@@ -45,6 +62,9 @@ namespace YUGIOH
             Actions = new List<Accion>();
             foreach (var item in card.Actions)
                 Actions.Add(item);
+            Addings = new List<Accion>();
+            foreach (var item in card.Addings)
+                Addings.Add(item);
         }
 
 
@@ -56,7 +76,7 @@ namespace YUGIOH
 
         public void ExecuteAction(int AIndex, int Target, Player Oppossing, Player Current)
         {
-            if (this != null && Oppossing.Field[Target]!=null)
+            if (this != null && Oppossing.Field[Target] != null)
                 Actions[AIndex].DoAct(this, Oppossing.Field[Target], Oppossing, Current);
         }
 

@@ -100,6 +100,13 @@ namespace YUGIOH
                     return board.GetWinner();
                 }
             }
+            foreach (var item in this.Field)
+            {
+                if (item == null) continue;
+                item.AddingsDo(this, adversary);
+            }
+            board.UpdateBoard();
+            PBTout.PrintField(adversary, this);
             System.Console.WriteLine();
             System.Console.WriteLine();
             AnsiConsole.Markup($"[red]TERMINAR TURNO de {Name}[/]");

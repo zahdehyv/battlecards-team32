@@ -52,19 +52,68 @@ namespace PBT
 
                     if (!card.Name.Contains('['))
                     {
-                        TableColumn wide = new TableColumn(new Panel(card.Name));
-                        wide.Width = 21;
+                        var gridup = new Grid();
+                        gridup.AddColumn();
+                        List<Panel> panels = new List<Panel>(){
+                            new Panel(card.Name)
+                        };
+                        for (int i = 0; i < card.Addings.Count; i++)
+                        {
+                            gridup.AddColumn();
+                            panels.Add(new Panel(card.Addings[i].Name[0].ToString()));
+                        }
+                        gridup.AddRow(panels.ToArray());
+
+                        TableColumn wide = new TableColumn(gridup);
+                        wide.Width = 23;
                         carta.AddColumn(wide);
                     }
                     else
                     {
                         TableColumn wide = new TableColumn(new Panel("ERROR"));
-                        wide.Width = 21;
+                        wide.Width = 23;
                         carta.AddColumn(wide);
                     }
 
 
-                    carta.AddRow($"A: {card.Stats["Attack"]} D: {card.Stats["Defense"]} S: {card.Stats["Speed"]}");
+                    //     carta.AddRow(new Panel(card.Stats["Attack"].ToString()+Emoji.Known.Dagger));
+                    //   carta.AddRow($"{card.Stats["Defense"]}:shield:");
+                    // carta.AddRow(new Markup($"{card.Stats["Attack"]}:dagger: {card.Stats["Defense"]}:shield:"));
+                    int pos = 0;
+                    Panel[] statist = new Panel[2];
+                    statist[0] = new Panel("---");
+                    statist[1] = new Panel("---");
+                    var griid = new Grid();
+                    griid.AddColumn();
+                    griid.AddColumn();
+                    foreach (var item in card.Stats.Keys)
+                    {
+                        if (item != "Life")
+                        {
+                            var currstt = new Panel($"{item[0]}{item[1]}:{card.Stats[item]}");
+                            currstt.RoundedBorder();
+                            switch (pos)
+                            {
+                                case 0:
+                                    statist[0] = currstt;
+                                    pos++;
+                                    if (item == card.Stats.Keys.ToArray()[card.Stats.Keys.ToArray().Length - 1])
+                                    {
+                                        statist[1] = new Panel("---");
+                                        griid.AddRow((Panel[])statist.Clone());
+                                    }
+                                    break;
+                                case 1:
+                                    statist[1] = currstt;
+                                    griid.AddRow((Panel[])statist.Clone());
+                                    pos--;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                    carta.AddRow(griid);
                     carta.AddRow(new List<Table>());
                     var result = GetWidthCard(card, 20);
                     carta.AddRow(new BarChart().Width(result.Item1).AddItem("LP", card.Stats["Life"], result.Item2));
@@ -109,6 +158,8 @@ namespace PBT
                 case null:
                     return "Pancracio";
                 case "":
+                    return "Pancracio";
+                case " ":
                     return "Pancracio";
                 default:
                     return name;

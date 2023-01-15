@@ -1,15 +1,16 @@
-st Life to 100
+set Life to 100
 set Defense Speed to Life/8
 set Attack to Life
+set Divinity to 3
 
 if 2=2&1<3
 start
-st Life to 1000
+set Life to 1000
 end
 
 while Life>100
 start
-set Lie to Life/3
+set Life to Life/3
 end
 
 set Life to Life+100
@@ -17,10 +18,43 @@ set Attack to Attack-70
 
 set adv.Life to 666
 
+def KillMagic 1
+start
+if adv.Magic
+start
+set adv.Life to 0
+end
+end
+
 def Cataclism 1
 start
 if self.exist(Life>600)
 start
 set adv.Life to 0
+end
+end
+
+add Inm 1000
+start
+if Life<100
+start
+set Life to 666
+end
+end
+
+def Curse 1
+start
+add crs 3
+start
+set Life to Life-10
+end
+end
+
+def Judgement 1
+start
+if Divinity>0
+start
+set Divinity to Divinity-1
+set adv.Defense to 0-999
 end
 end

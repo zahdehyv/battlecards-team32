@@ -7,19 +7,14 @@ namespace Compiler
         {
             if (code.StartsWith("adv."))
             {
-                bool add = false;
                 string build = "";
-                foreach (var item in code)
-                {
-                    if (add)
-                        build += item;
-                    if (item == '.')
-                        add = true;
-                }
+                for (int i = 4; i < code.Length; i++)
+                    build += code[i];
                 return (build, false);
             }
             else return (code, true);
         }
+
         static (List<string>, int, List<string>) BuildInst(List<string> code, int i, List<Error> errors, int startline)
         {
             List<string> INST = new List<string>();
@@ -66,9 +61,7 @@ namespace Compiler
             }
 
             if (balance > 0)
-            {
                 errors.Add(new Error("la instruccion iniciada en esta linea llega al final del codigo sin cerrarse", startline + i));
-            }
 
             return (INST, i, INSTELSE);
         }
@@ -76,6 +69,8 @@ namespace Compiler
         {
             List<InstructionNode> _Inst = new List<InstructionNode>();
             List<Accion> _Act = new List<Accion>();
+            List<Accion> _Add = new List<Accion>();
+
             //code.RemoveAll(x => ValidINST(x));
 
             for (int i = 0; i < code.Count; i++)
@@ -106,12 +101,10 @@ namespace Compiler
                             else
                             {
                                 var a = GetAsignable(decode[j]);
-                                if (stats.ContainsKey(a.Item1))
-                                {
-                                    ToSet.Add(a.Item1);
-                                    self.Add(a.Item2);
-                                }
-                                else errors.Add(new Error($"no se puede asignar a {a.Item1} pues no existe en el contexto", startline + i));
+                                if (!stats.ContainsKey(a.Item1))
+                                    stats.Add(a.Item1, 1);
+                                ToSet.Add(a.Item1);
+                                self.Add(a.Item2);
 
                             }
                         }
@@ -126,8 +119,8 @@ namespace Compiler
                         {
                             expA += decode[j];
                         }
-                        var BuiltInst = BuildInst(code, i, errors,startline);
-                        int tempstart = i+2;
+                        var BuiltInst = BuildInst(code, i, errors, startline);
+                        int tempstart = i + 2;
                         i = BuiltInst.Item2;
                         var instrucciones = ParsearInst(BuiltInst.Item1, stats, errors, tempstart);
                         _Act.AddRange(instrucciones.Item2);
@@ -137,8 +130,8 @@ namespace Compiler
                         expA = "";
                         for (int j = 1; j < decode.Length; j++)
                             expA += decode[j];
-                        BuiltInst = BuildInst(code, i, errors,startline);
-                        tempstart = i+2;
+                        BuiltInst = BuildInst(code, i, errors, startline);
+                        tempstart = i + 2;
                         i = BuiltInst.Item2;
                         instrucciones = ParsearInst(BuiltInst.Item1, stats, errors, tempstart);
                         _Act.AddRange(instrucciones.Item2);
@@ -161,15 +154,15 @@ namespace Compiler
                                 expA += decode[j];
                         }
 
-                        BuiltInst = BuildInst(code, i, errors,startline);
-                        tempstart = i+2;
+                        BuiltInst = BuildInst(code, i, errors, startline);
+                        tempstart = i + 2;
                         i = BuiltInst.Item2;
                         instrucciones = ParsearInst(BuiltInst.Item1, stats, errors, tempstart);
                         _Act.AddRange(instrucciones.Item2);
                         _Inst.Add(new ForInstruction(ParsearExps(expA, stats, errors, i), ParsearExps(expB, stats, errors, i), instrucciones.Item1));
 
                         break;
-                    case "def":
+                    case "add":
                         int toselect = 0;
                         if (decode[2].Length == decode[2].ToCharArray().ToList().Count(x => Char.IsDigit(x)))
                         {
@@ -178,8 +171,23 @@ namespace Compiler
                         string desc = "";
                         for (int p = 3; p < decode.Length; p++)
                             desc += $"{decode[p]} ";
-                        BuiltInst = BuildInst(code, i, errors,startline);
-                        tempstart = i+2;
+                        BuiltInst = BuildInst(code, i, errors, startline);
+                        tempstart = i + 2;
+                        i = BuiltInst.Item2;
+                        instrucciones = ParsearInst(BuiltInst.Item1, stats, errors, tempstart);
+                        _Inst.Add(new AddInstruction(new Accion(decode[1], toselect, instrucciones.Item1, desc)));
+                        break;
+                    case "def":
+                        toselect = 0;
+                        if (decode[2].Length == decode[2].ToCharArray().ToList().Count(x => Char.IsDigit(x)))
+                        {
+                            toselect = Convert.ToInt32(decode[2]);
+                        }
+                        desc = "";
+                        for (int p = 3; p < decode.Length; p++)
+                            desc += $"{decode[p]} ";
+                        BuiltInst = BuildInst(code, i, errors, startline);
+                        tempstart = i + 2;
                         i = BuiltInst.Item2;
                         instrucciones = ParsearInst(BuiltInst.Item1, stats, errors, tempstart);
                         _Act.Add(new Accion(decode[1], toselect, instrucciones.Item1, desc));
@@ -244,15 +252,9 @@ namespace Compiler
         }
         public static ExpressionNode ParsearExps(string code, Dictionary<string, int> stats, List<Error> errors, int line)
         {
-            string[] variables = { "Life", "Defense", "Speed", "Attack", "adv.Life", "adv.Defense", "adv.Speed", "adv.Attack" };
             if (code.Length == code.ToCharArray().ToList().Count(x => Char.IsDigit(x)))
             {
                 return new NumberExp(code);
-            }
-            else if (variables.Contains(code))
-            {
-                var a = GetAsignable(code);
-                return new VarExp(a.Item1, a.Item2);
             }
             else if (CheckLogic(code))
             {
@@ -306,21 +308,29 @@ namespace Compiler
                             }
                             if (A == "")
                             {
-                                A = "1";
-                                errors.Add(new Error($"se esperaba algo a la izquierda de {code[i]}",line));
+                                A = "-1";
+                                errors.Add(new Error($"se esperaba algo a la izquierda de {code[i]}", line));
                             }
                             if (B == "")
                             {
-                                B = "1";
-                                errors.Add(new Error($"se esperaba algo a la derecha de {code[i]}",line));
+                                B = "-1";
+                                errors.Add(new Error($"se esperaba algo a la derecha de {code[i]}", line));
                             }
                             return new BinExp(ParsearExps(A, stats, errors, line), ParsearExps(B, stats, errors, line), code[i].ToString());
                         }
                     }
                 }
             }
-            errors.Add(new Error($"no se reconoce la expresion {code}",line));
-            return new NumberExp("1");
+            if (code == "" || code == " ")
+            {
+                errors.Add(new Error($"expresion vacia", line));
+                return new NumberExp("-1");
+            }
+            else
+            {
+                var posVAR = GetAsignable(code);
+                return new VarExp(posVAR.Item1, posVAR.Item2);
+            }
         }
     }
 

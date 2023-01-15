@@ -1,4 +1,12 @@
-set Life to 8
-set Speed to 3
+set Life to 11
 set Defense to 4
 set Attack to 13
+
+def Healins 1
+start
+set adv.Life to adv.Life+13
+add Regeneration 5
+start
+set adv.Life to adv.Life+5
+end
+end
